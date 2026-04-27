@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dirt-F1 Industry | Official Rule Book</title>
+    <title>Dirt-F1 Fever | Official Rule Book</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,30 +11,49 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Teko:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <!-- Tailwind Config for F1 x Dirt Theme -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        heading: ['Orbitron', 'sans-serif'],
-                        body: ['Rajdhani', 'sans-serif'],
+                        heading: ['Teko', 'sans-serif'], // Aggressive racing font
+                        body: ['Rajdhani', 'sans-serif'], // Technical, telemetry style
                     },
                     colors: {
                         dirt: {
-                            500: '#ea580c', // Orange-600
-                            600: '#c2410c', // Orange-700
-                            900: '#431407', // Orange-950
+                            orange: '#ea580c', // Bright dirt/mud orange
+                            dark: '#9a3412',
+                            mud: '#431407'
                         },
-                        tech: {
-                            800: '#1e293b', // Slate-800
-                            900: '#0f172a', // Slate-900
-                            950: '#020617', // Slate-950
+                        f1: {
+                            red: '#e10600', // Official F1 Red
+                            dark: '#990000',
+                        },
+                        carbon: {
+                            dark: '#0a0a0a',
+                            base: '#141414',
+                            light: '#1f1f1f',
+                            border: '#333333'
+                        }
+                    },
+                    animation: {
+                        'slide-in': 'slideIn 0.4s ease-out forwards',
+                        'rev': 'revEngine 0.1s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        slideIn: {
+                            '0%': { opacity: '0', transform: 'translateX(20px) skewX(-2deg)' },
+                            '100%': { opacity: '1', transform: 'translateX(0) skewX(0)' },
+                        },
+                        revEngine: {
+                            '0%': { transform: 'translateY(0px)' },
+                            '100%': { transform: 'translateY(-2px)' },
                         }
                     }
                 }
@@ -44,120 +63,183 @@
 
     <style>
         body {
-            background-color: #020617;
+            background-color: #0a0a0a;
+            /* Asphalt / Carbon Fiber Pattern */
             background-image: 
-                radial-gradient(at 0% 0%, hsla(28, 100%, 40%, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, hsla(28, 100%, 20%, 0.1) 0px, transparent 50%),
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+                linear-gradient(45deg, #0f0f0f 25%, transparent 25%, transparent 75%, #0f0f0f 75%, #0f0f0f),
+                linear-gradient(45deg, #0f0f0f 25%, transparent 25%, transparent 75%, #0f0f0f 75%, #0f0f0f);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            color: #d1d5db;
         }
 
-        /* Custom Scrollbar */
+        /* Racing Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #c2410c; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; border-left: 1px solid #333; }
+        ::-webkit-scrollbar-thumb { background: #e10600; border-radius: 0px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ea580c; }
 
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.4s ease-in-out forwards;
+        /* F1 Aero Cuts (Slanted UI Elements) */
+        .aero-cut {
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .aero-cut-btn {
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+        .aero-slant {
+            transform: skewX(-10deg);
+        }
+        .aero-slant-reverse {
+            transform: skewX(10deg);
         }
 
+        /* Nav Link States */
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+            border-left: 3px solid transparent;
+        }
+        .nav-link:hover {
+            border-left: 3px solid #ea580c;
+            background-color: #1f1f1f;
+        }
         .nav-link.active {
-            background: linear-gradient(90deg, rgba(234, 88, 12, 0.2) 0%, transparent 100%);
-            border-left: 4px solid #ea580c;
-            color: #f97316;
+            background: linear-gradient(90deg, rgba(225, 6, 0, 0.15) 0%, transparent 100%);
+            border-left: 4px solid #e10600;
+            color: #ffffff;
         }
+        .nav-link.active i { color: #ea580c; }
 
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        /* Table Styling - Telemetry Look */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 4px; margin-top: 1rem; margin-bottom: 1rem; }
+        th { background-color: #141414; color: #ea580c; font-family: 'Teko', sans-serif; text-transform: uppercase; font-size: 1.2rem; padding: 0.75rem 1rem; text-align: left; letter-spacing: 1px; border-bottom: 2px solid #e10600; }
+        td { padding: 1rem; background-color: #1a1a1a; border-top: 1px solid #2a2a2a; border-bottom: 1px solid #2a2a2a; color: #e2e8f0; }
+        tr td:first-child { border-left: 3px solid #333; }
+        tr td:last-child { border-right: 1px solid #2a2a2a; }
+        tr:hover td { background-color: rgba(234, 88, 12, 0.05); border-left-color: #ea580c; }
 
-        /* Table Styling */
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; margin-bottom: 1rem; }
-        th { background-color: #1e293b; color: #ea580c; font-family: 'Orbitron', sans-serif; text-transform: uppercase; font-size: 0.85rem; padding: 1rem; text-align: left; border-bottom: 2px solid #ea580c; }
-        td { padding: 1rem; border-bottom: 1px solid #334155; color: #cbd5e1; }
-        tr:hover td { background-color: rgba(234, 88, 12, 0.05); }
-
-        .checklist-item::before {
-            content: '\f14a';
+        .list-icon::before {
+            content: '\f105'; /* fa-angle-right */
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
-            color: #ea580c;
-            margin-right: 10px;
+            color: #e10600;
+            margin-right: 12px;
         }
     </style>
 </head>
-<body class="text-gray-300 font-body antialiased min-h-screen flex flex-col">
+<body class="font-body antialiased min-h-screen flex flex-col selection:bg-f1-red selection:text-white">
 
     <!-- Header Section -->
-    <header class="relative overflow-hidden glass-panel border-b border-dirt-600/30">
-        <div class="absolute inset-0 bg-gradient-to-r from-tech-950 via-tech-900 to-tech-950 opacity-90"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-10 flex flex-col md:flex-row items-center justify-between">
-            <div class="flex items-center space-x-6">
-                <!-- Logo / Emblem Placeholder -->
-                <div class="w-20 h-20 rounded-full bg-tech-800 border-2 border-dirt-500 flex items-center justify-center shadow-[0_0_15px_rgba(234,88,12,0.5)]">
-                    <i class="fa-solid fa-flag-checkered text-4xl text-dirt-500"></i>
+    <header class="relative border-b-4 border-dirt-orange bg-carbon-base shadow-[0_4px_20px_rgba(234,88,12,0.15)] z-20">
+        <!-- Top F1 Racing Stripe -->
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-f1-red via-dirt-orange to-f1-red"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between relative">
+            <div class="flex items-center space-x-6 w-full md:w-auto">
+                
+                
+                <div class="relative w-24 h-24 bg-carbon-light border-2 border-dirt-orange aero-cut flex items-center justify-center shrink-0 overflow-hidden shadow-[0_0_15px_rgba(225,6,0,0.3)]">
+                    
+                    <!-- Replace 'YOUR_LOGO_LINK_HERE.png' with your actual image URL -->
+                    <img id="server-logo" 
+                         src="https://github.com/plaglo/F1-RULEBOOK/blob/main/dirt%20f1%20fever%20logo.png" 
+                         alt="Server Logo" 
+                         class="w-full h-full object-cover z-10 relative bg-carbon-dark"
+                         onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';">
+                    
+                    <!-- Fallback Icon if link is broken or not yet added -->
+                    <div id="logo-fallback" class="absolute inset-0 flex items-center justify-center hidden bg-carbon-base text-dirt-orange">
+                        <i class="fa-solid fa-flag-checkered text-4xl"></i>
+                    </div>
+
                 </div>
+                <!-- ========================================== -->
+
                 <div>
-                    <h2 class="text-dirt-500 font-heading text-sm tracking-[0.2em] uppercase mb-1">Xlantis Roleplay Server</h2>
-                    <h1 class="text-4xl md:text-5xl font-heading font-black text-white uppercase tracking-wider drop-shadow-lg">
-                        Dirt-F1 <span class="text-transparent bg-clip-text bg-gradient-to-r from-dirt-500 to-yellow-500">Industry</span>
+                    <h2 class="text-gray-400 font-heading text-xl tracking-[0.2em] uppercase leading-none border-l-2 border-f1-red pl-2 mb-1">Xlantis Roleplay</h2>
+                    <h1 class="text-5xl md:text-6xl font-heading font-bold text-white uppercase tracking-wide mt-1 aero-slant inline-block pr-2">
+                        Dirt-F1 <span class="text-transparent bg-clip-text bg-gradient-to-r from-f1-red to-dirt-orange">Fever</span>
                     </h1>
-                    <p class="mt-2 text-gray-400 font-medium text-lg border-l-2 border-dirt-500 pl-3">Official RMO Rule Book & Regulations</p>
                 </div>
             </div>
-            <div class="mt-6 md:mt-0 text-right hidden md:block">
-                <div class="inline-block bg-tech-800/80 border border-tech-700 rounded px-4 py-2 text-sm font-heading">
-                    <span class="text-gray-400">AUTHORITY:</span> <span class="text-white">ATTUKKAL FAMILY (ATK)</span>
+            
+            <div class="mt-6 md:mt-0 flex flex-col items-end hidden md:flex">
+                <div class="text-right border-r-4 border-f1-red pr-4 bg-carbon-light p-3 aero-cut">
+                    <p class="text-dirt-orange font-heading text-2xl uppercase tracking-widest leading-none">Official Rule Book</p>
+                    <p class="text-gray-400 text-sm mt-1">AUTHORITY: <span class="text-white font-bold">ATTUKKAL FAMILY (ATK)</span></p>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Layout -->
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+    <!-- Main Layout -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8 relative z-10">
         
         <!-- Mobile Menu Toggle -->
-        <div class="md:hidden w-full mb-4">
-            <button id="mobileMenuBtn" class="w-full bg-tech-800 text-white font-heading py-3 px-4 rounded border border-dirt-500/50 flex justify-between items-center">
-                <span><i class="fa-solid fa-bars mr-2 text-dirt-500"></i> Navigation Menu</span>
-                <i class="fa-solid fa-chevron-down text-sm"></i>
+        <div class="md:hidden w-full mb-2">
+            <button id="mobileMenuBtn" class="w-full bg-carbon-light text-dirt-orange font-heading text-2xl py-3 px-4 aero-cut border-l-4 border-f1-red flex justify-between items-center active:scale-95 transition-transform shadow-lg">
+                <span><i class="fa-solid fa-bars-staggered mr-2"></i> RACE SECTIONS</span>
+                <i class="fa-solid fa-chevron-down"></i>
             </button>
         </div>
 
         <!-- Sidebar Navigation -->
-        <aside id="sidebar" class="hidden md:block w-full md:w-1/4 flex-shrink-0">
-            <div class="glass-panel rounded-xl p-4 sticky top-6 shadow-2xl shadow-black/50">
-                <h3 class="font-heading text-white text-lg border-b border-gray-700 pb-3 mb-4 uppercase tracking-widest"><i class="fa-solid fa-book-open text-dirt-500 mr-2"></i> Index</h3>
-                <nav class="space-y-1" id="nav-container">
+        <aside id="sidebar" class="hidden md:block w-full md:w-[28%] flex-shrink-0">
+            <div class="bg-carbon-base/95 backdrop-blur-md aero-cut border border-carbon-border sticky top-6 shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+                <div class="p-4 border-b border-carbon-border flex items-center justify-between bg-carbon-light">
+                    <h3 class="font-heading text-white text-3xl uppercase tracking-widest m-0 leading-none aero-slant pl-2 border-l-4 border-dirt-orange">Directory</h3>
+                    <i class="fa-solid fa-book-open-reader text-gray-500"></i>
+                </div>
+                <nav class="p-3 space-y-1 overflow-y-auto max-h-[75vh]" id="nav-container">
                     <!-- Nav items generated via JS -->
                 </nav>
             </div>
         </aside>
 
         <!-- Content Area -->
-        <section class="w-full md:w-3/4 glass-panel rounded-xl p-6 md:p-10 shadow-2xl shadow-black/50 relative overflow-hidden min-h-[600px]">
-            <!-- Decorative corner elements -->
-            <div class="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-dirt-500 opacity-50 rounded-tl-xl pointer-events-none"></div>
-            <div class="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-dirt-500 opacity-50 rounded-br-xl pointer-events-none"></div>
-
-            <div id="content-container" class="relative z-10 text-lg leading-relaxed">
+        <section class="w-full md:w-[72%] bg-carbon-base/95 backdrop-blur-md aero-cut border border-carbon-border relative min-h-[600px] shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+            <!-- Decorative F1 overlay stripes -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-dirt-orange/10 to-transparent pointer-events-none aero-cut"></div>
+            <div class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-f1-red via-dirt-orange to-transparent opacity-50"></div>
+            
+            <div id="content-container" class="p-6 md:p-10 relative z-10 text-lg leading-relaxed text-gray-300">
                 <!-- Content injected via JS -->
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-tech-950 border-t border-tech-800 py-8 mt-12">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="font-heading text-dirt-500 text-xl mb-2 tracking-wider">"IN THE DIRT-F1 INDUSTRY, WE DON'T JUST WATCH THE RACE."</p>
-            <p class="text-gray-500 text-sm">Maintained by the RMO & The Attukkal Family (ATK) | Xlantis RP</p>
+    <!-- Footer Area -->
+    <footer class="bg-carbon-base border-t-4 border-carbon-border pt-8 pb-12 mt-auto relative z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
+        
+        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center text-center">
+            
+            <!-- RMO Quote -->
+            <div class="inline-block border-l-4 border-f1-red border-r-4 border-dirt-orange px-8 py-3 bg-carbon-light mb-8 aero-cut-btn">
+                <p class="font-heading text-white text-2xl tracking-widest m-0 uppercase italic">"We manage the integrity of every bolt turned."</p>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- DISCORD LINK SECTION -->
+            <!-- ========================================== -->
+            <div class="mb-8 p-6 bg-carbon-light border border-carbon-border w-full max-w-md aero-cut shadow-lg group hover:border-[#5865F2] transition-colors duration-300 relative overflow-hidden">
+                <!-- Hover Glow -->
+                <div class="absolute inset-0 bg-[#5865F2] opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none"></div>
+                
+                <a href="https://discord.gg/Uh2QrnMgSx" target="_blank" class="flex flex-col items-center justify-center text-gray-400 hover:text-white transition-colors relative z-10">
+                    <i class="fa-brands fa-discord text-6xl mb-3 text-[#5865F2] group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgba(88,101,242,0.8)] transition-all duration-300"></i>
+                    <span class="font-heading text-2xl uppercase tracking-widest text-white group-hover:text-[#5865F2] transition-colors">Join for more updates</span>
+                    <span class="text-sm mt-1 font-body">Official Community Server</span>
+                </a>
+            </div>
+            <!-- ========================================== -->
+
+            <p class="text-gray-500 text-sm font-heading text-lg tracking-widest"><i class="fa-solid fa-shield-halved text-f1-red mr-1"></i> Maintained by the RMO & ATK Family | Xlantis RP</p>
+        </div>
+
+        <!-- Footer Bottom Decor -->
+        <div class="absolute bottom-0 left-0 w-full h-1 flex">
+            <div class="w-1/2 h-full bg-f1-red"></div>
+            <div class="w-1/2 h-full bg-dirt-orange"></div>
         </div>
     </footer>
 
@@ -166,128 +248,141 @@
         const rulesData = [
             {
                 id: 1,
-                icon: "fa-solid fa-sitemap",
-                title: "1. The Foundation & Organisation",
+                icon: "fa-solid fa-flag-checkered",
+                title: "1. Foundation & Org",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 1: The Foundation & Organisation</h2>
+                    <div class="border-l-8 border-f1-red pl-4 bg-gradient-to-r from-f1-red/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 1: The Foundation</h2>
+                    </div>
                     
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">1.1 What is Dirt-F1?</h3>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-8 mb-2 flex items-center uppercase"><i class="fa-solid fa-caret-right mr-2 text-f1-red"></i> 1.1 What is Dirt-F1?</h3>
                     <p class="mb-4">Dirt-F1 is the pinnacle of professional off-road motorsport. It is not a street race, nor is it a chaotic demolition derby. It is a high-stakes discipline that combines the raw, unpredictable nature of dirt-track racing with the rigid technical precision and strategic depth of Formula 1.</p>
-                    <p class="mb-4">In this league, victory is determined long before the green flag drops. It is won in the garages during the build phase, in the pits through rapid mechanical coordination, and on the track through disciplined driving. Dirt-F1 demands respect for the machine, adherence to the law, and a commitment to the highest standards of sportsmanship.</p>
+                    <p class="mb-6">In this league, victory is determined long before the green flag drops. It is won in the garages during the build phase, in the pits through rapid mechanical coordination, and on the track through disciplined driving. Dirt-F1 demands respect for the machine, adherence to the law, and a commitment to the highest standards of sportsmanship.</p>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">1.2 The Founding & Race Management Organisation (RMO)</h3>
-                    <p class="mb-4">The league is founded, funded, and strictly governed by the <strong>Attukkal Family (ATK)</strong>. Known for their vast influence and commitment to excellence, the ATK Family provides the infrastructure, the prize pools, and the regulatory oversight that makes this industry possible.</p>
-                    <p class="mb-4">Under the authority of the ATK Management, the league operates with total transparency. Every race is monitored by ATK officials to ensure that no team—regardless of their wealth or power—gains an unfair advantage.</p>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-8 mb-2 flex items-center uppercase"><i class="fa-solid fa-caret-right mr-2 text-f1-red"></i> 1.2 The Founding & RMO</h3>
+                    <p class="mb-6">The league is founded, funded, and strictly governed by the <strong class="text-white">Attukkal Family (ATK)</strong>. Known for their vast influence and commitment to excellence, the ATK Family provides the infrastructure, the prize pools, and the regulatory oversight that makes this industry possible. Under the authority of the ATK Management, the league operates with total transparency.</p>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">1.3 The Industry Ecosystem: A Partnered Vision</h3>
-                    <p class="mb-4">The Dirt-F1 industry functions as a circular economy where every partner plays a mechanical role in the success of the event. The ecosystem is built on a primary partnership between ATK and ZRX Customs.</p>
-                    <ul class="list-none space-y-4 mb-6 bg-tech-800/50 p-6 rounded-lg border border-tech-700">
-                        <li><span class="text-white font-bold block mb-1"><i class="fa-solid fa-crown text-dirt-500 mr-2"></i> ATK (The Backbone):</span> Provides the funding, the legal framework, the race tracks, and the ultimate "Management Technicians" who act as the eyes and ears of the league.</li>
-                        <li><span class="text-white font-bold block mb-1"><i class="fa-solid fa-wrench text-dirt-500 mr-2"></i> ZRX Customs (The Technical Standard):</span> As the lead technical partner, ZRX sets the "Homologation" standards. They certify the vehicles, train the technicians, and provide the high-grade components required for race-day repairs.</li>
-                        <li><span class="text-white font-bold block mb-1"><i class="fa-solid fa-users text-dirt-500 mr-2"></i> The Teams (The Competitors):</span> Teams enter this ecosystem as professional entities. They don’t just "race"—they manage budgets, hire certified staff, and maintain technical partnerships with ZRX or other authorized customs.</li>
-                        <li><span class="text-white font-bold block mb-1"><i class="fa-solid fa-handshake text-dirt-500 mr-2"></i> The Support Network:</span> Food providers and Media partners fill the gaps, ensuring the drivers stay fit and the fans stay engaged, creating a self-sustaining industry where everyone has a professional stake.</li>
-                    </ul>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-8 mb-2 flex items-center uppercase"><i class="fa-solid fa-caret-right mr-2 text-f1-red"></i> 1.3 The Industry Ecosystem</h3>
+                    <p class="mb-4">The Dirt-F1 industry functions as a circular economy built on a primary partnership between ATK and ZRX Customs.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <div class="bg-carbon-light border-t-2 border-dirt-orange p-4 aero-cut relative group hover:bg-[#252525] transition-colors">
+                            <i class="fa-solid fa-crown text-3xl text-f1-red absolute top-4 right-4 opacity-20 group-hover:opacity-100 transition-opacity"></i>
+                            <h4 class="text-2xl font-heading text-white mb-1 uppercase tracking-wider">ATK (The Backbone)</h4>
+                            <p class="text-sm text-gray-400">Provides funding, legal framework, tracks, and "Management Technicians" (the eyes and ears).</p>
+                        </div>
+                        <div class="bg-carbon-light border-t-2 border-gray-500 p-4 aero-cut relative group hover:bg-[#252525] transition-colors">
+                            <i class="fa-solid fa-wrench text-3xl text-gray-400 absolute top-4 right-4 opacity-20 group-hover:opacity-100 transition-opacity"></i>
+                            <h4 class="text-2xl font-heading text-white mb-1 uppercase tracking-wider">ZRX Customs</h4>
+                            <p class="text-sm text-gray-400">Sets "Homologation" standards. Certifies vehicles, trains techs, provides repair components.</p>
+                        </div>
+                        <div class="bg-carbon-light border-t-2 border-dirt-orange p-4 aero-cut relative group hover:bg-[#252525] transition-colors">
+                            <i class="fa-solid fa-users text-3xl text-dirt-orange absolute top-4 right-4 opacity-20 group-hover:opacity-100 transition-opacity"></i>
+                            <h4 class="text-2xl font-heading text-white mb-1 uppercase tracking-wider">The Teams</h4>
+                            <p class="text-sm text-gray-400">Professional entities managing budgets, certified staff, and custom shop partnerships.</p>
+                        </div>
+                        <div class="bg-carbon-light border-t-2 border-f1-red p-4 aero-cut relative group hover:bg-[#252525] transition-colors">
+                            <i class="fa-solid fa-handshake text-3xl text-f1-red absolute top-4 right-4 opacity-20 group-hover:opacity-100 transition-opacity"></i>
+                            <h4 class="text-2xl font-heading text-white mb-1 uppercase tracking-wider">Support Network</h4>
+                            <p class="text-sm text-gray-400">Food providers & Media fill gaps, ensuring fitness and fan engagement.</p>
+                        </div>
+                    </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">1.4 The "ATK Seal of Integrity"</h3>
-                    <p class="mb-4">The most unique feature of this ecosystem is the <strong>Management Technician</strong>. Unlike traditional racing where you only see officials at the finish line, an ATK-assigned official is embedded inside your team’s pit box.</p>
-                    <blockquote class="p-6 my-6 border-l-4 border-dirt-500 bg-tech-900 rounded-r-lg font-heading text-xl italic text-gray-300 shadow-lg">
-                        "In the Dirt-F1 Industry, we don't just watch the race; we manage the integrity of every bolt turned and every dollar spent." <br>
-                        <span class="text-sm text-dirt-500 mt-2 block">— The Attukkal Family Motto</span>
-                    </blockquote>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-8 mb-2 flex items-center uppercase"><i class="fa-solid fa-caret-right mr-2 text-f1-red"></i> 1.4 "ATK Seal of Integrity"</h3>
+                    <p class="mb-4">The most unique feature of this ecosystem is the <strong class="text-white text-dirt-orange">Management Technician</strong>. An ATK-assigned official is embedded inside your team’s pit box.</p>
                 `
             },
             {
                 id: 2,
-                icon: "fa-solid fa-handshake",
-                title: "2. The Partnership Network",
+                icon: "fa-solid fa-handshake-angle",
+                title: "2. Partnership Network",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 2: The Partnership Network</h2>
+                    <div class="border-l-8 border-dirt-orange pl-4 bg-gradient-to-r from-dirt-orange/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 2: Network</h2>
+                    </div>
                     
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">2.1 Technical Partners: ZRX Customs & 7D Autos</h3>
-                    <p class="mb-4">The technical backbone of the league is formed by a dual-partnership with the city’s premier automotive experts: ZRX Customs and 7D Autos.</p>
-                    <ul class="space-y-2 mb-6 ml-4">
-                        <li><strong class="text-white">Expertise:</strong> Both shops are recognized as the elite providers of high-performance modification services. They set the benchmark for what a "legal" racing machine should be.</li>
-                        <li><strong class="text-white">The Role:</strong>
-                            <ul class="list-disc list-inside ml-6 mt-2 text-gray-400 space-y-1">
-                                <li>They are the Official Suppliers of League-Spec parts and repair kits.</li>
-                                <li>They provide the Senior Technical Consultants assigned to each team's pit box.</li>
-                                <li>They conduct the Master Technician Certification exams, ensuring every team’s mechanic is capable of working under F1-level pressure.</li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <h3 class="text-3xl font-heading text-white mt-8 mb-4 flex items-center uppercase"><i class="fa-solid fa-microchip mr-2 text-dirt-orange"></i> 2.1 Technical: ZRX & 7D</h3>
+                    <div class="bg-carbon-light border-l-4 border-gray-500 p-5 aero-cut mb-8">
+                        <p class="mb-4 text-gray-300">The technical backbone of the league is formed by a dual-partnership with the city’s premier automotive experts: ZRX Customs and 7D Autos.</p>
+                        <ul class="space-y-3">
+                            <li class="list-icon"><strong class="text-white">Expertise:</strong> Elite providers of high-performance mods. They set the benchmark for "legal" machines.</li>
+                            <li class="list-icon"><strong class="text-white">The Role:</strong>
+                                <ul class="list-disc list-inside ml-8 mt-2 text-gray-400 space-y-1">
+                                    <li>Official Suppliers of League-Spec parts and repair kits.</li>
+                                    <li>Provide Senior Technical Consultants for pit boxes.</li>
+                                    <li>Conduct Master Technician Certification exams.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">2.2 Hospitality Partners: GM Cafe & EBT Cafe</h3>
-                    <p class="mb-4">A race team is only as good as its fuel, and that includes the personnel. The league has partnered with GM Cafe and EBT Cafe, the two most reputable hospitality brands in the city.</p>
-                    <ul class="space-y-2 mb-6 ml-4">
-                        <li><strong class="text-white">The Reputation:</strong> Known for their excellent food quality and massive customer base, these cafes bring prestige to the Paddock.</li>
-                        <li><strong class="text-white">The Role:</strong>
-                            <ul class="list-disc list-inside ml-6 mt-2 text-gray-400 space-y-1">
-                                <li><strong class="text-gray-300">Paddock Service:</strong> They manage the "Hospitality Suites" where team members and VIPs can recover.</li>
-                                <li><strong class="text-gray-300">Driver Nutrition:</strong> They provide specialized menus designed to maintain driver focus and stamina throughout the grueling dirt heats.</li>
-                                <li><strong class="text-gray-300">Logistics:</strong> They ensure a steady supply of refreshments is available at the trackside, managing high-volume demand during race days.</li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <h3 class="text-3xl font-heading text-white mt-8 mb-4 flex items-center uppercase"><i class="fa-solid fa-mug-hot mr-2 text-dirt-orange"></i> 2.2 Hospitality: GM & EBT</h3>
+                    <div class="bg-carbon-light border-l-4 border-f1-red p-5 aero-cut mb-8">
+                        <p class="mb-4 text-gray-300">A race team is only as good as its fuel. Partnered with GM Cafe and EBT Cafe to maintain prestige in the Paddock.</p>
+                        <ul class="space-y-3">
+                            <li class="list-icon"><strong class="text-white">Paddock Service:</strong> Manage "Hospitality Suites" for team recovery.</li>
+                            <li class="list-icon"><strong class="text-white">Driver Nutrition:</strong> Specialized menus to maintain focus and stamina.</li>
+                            <li class="list-icon"><strong class="text-white">Logistics:</strong> Ensure steady trackside refreshments during high-volume demand.</li>
+                        </ul>
+                    </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">2.3 Media Partner: X-NEWS</h3>
-                    <p class="mb-4">To ensure the world sees every overtake and every crash, the league is partnered with X-NEWS, the city’s official, government-approved news channel.</p>
-                    <ul class="space-y-2 mb-6 ml-4">
-                        <li><strong class="text-white">The Authority:</strong> X-NEWS is the most trusted source of information in the city, holding the highest customer reviews for their journalistic integrity.</li>
-                        <li><strong class="text-white">The Role:</strong>
-                            <ul class="list-disc list-inside ml-6 mt-2 text-gray-400 space-y-1">
-                                <li><strong class="text-gray-300">Official Broadcasting:</strong> X-NEWS holds exclusive rights to film and broadcast the Dirt-F1 series.</li>
-                                <li><strong class="text-gray-300">Publicity:</strong> They manage team photography, driver interviews, and the "Championship Highlights" reels.</li>
-                                <li><strong class="text-gray-300">The Record of Truth:</strong> Their footage serves as the "Official Video Evidence" for the Race Management Organisation (RMO) when reviewing track incidents or rule violations.</li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <h3 class="text-3xl font-heading text-white mt-8 mb-4 flex items-center uppercase"><i class="fa-solid fa-video mr-2 text-dirt-orange"></i> 2.3 Media Partner: X-NEWS</h3>
+                    <div class="bg-carbon-light border-l-4 border-[#3b82f6] p-5 aero-cut mb-6">
+                        <p class="mb-4 text-gray-300">Partnered with X-NEWS, the city’s official news channel, to broadcast every overtake and crash.</p>
+                        <ul class="space-y-3">
+                            <li class="list-icon"><strong class="text-white">Broadcasting:</strong> Exclusive rights to film and broadcast the series.</li>
+                            <li class="list-icon"><strong class="text-white">Publicity:</strong> Team photography, interviews, and Championship Highlights.</li>
+                            <li class="list-icon"><strong class="text-dirt-orange">The Record of Truth:</strong> Footage serves as "Official Video Evidence" for the RMO when reviewing track incidents.</li>
+                        </ul>
+                    </div>
                 `
             },
             {
                 id: 3,
-                icon: "fa-solid fa-id-card",
-                title: "3. Entry & Qualifications",
+                icon: "fa-solid fa-id-card-clip",
+                title: "3. Entry & Qualify",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 3: Entry & Qualifications</h2>
+                    <div class="border-l-8 border-f1-red pl-4 bg-gradient-to-r from-f1-red/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 3: Qualification</h2>
+                    </div>
                     
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">3.1 Team-Based Registration</h3>
-                    <p class="mb-4">Participation in the Dirt-F1 League is strictly team-based. No individual entries or "mercenary" drivers are permitted.</p>
-                    <ul class="list-disc list-outside ml-6 space-y-2 mb-6">
-                        <li><strong class="text-white">The Nine-Member Protocol:</strong> Every registered team must consist of exactly 9 members, each filling a specific role as defined by the ATK Management (see Section 4 for role details).</li>
-                        <li><strong class="text-white">Seasonal Entry Fee:</strong> To cover the costs of track maintenance, prize pools, and management oversight, each team must pay a Seasonal Entry Fee. This fee is set by the RMO at the start of every season and is non-refundable.</li>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-6 mb-3 uppercase">3.1 Team-Based Entry</h3>
+                    <ul class="space-y-3 mb-6">
+                        <li class="bg-carbon-light p-4 border-l-4 border-gray-600 aero-cut-btn"><strong class="text-white">The Nine-Member Protocol:</strong> Every registered team must consist of exactly 9 members, each filling a specific role. No mercenaries.</li>
+                        <li class="bg-carbon-light p-4 border-l-4 border-dirt-orange aero-cut-btn"><strong class="text-white">Seasonal Entry Fee:</strong> Non-refundable fee to cover track maintenance, prize pools, and RMO oversight.</li>
                     </ul>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">3.2 Mandatory Licensing (The Professional Standard)</h3>
-                    <p class="mb-4">Skill is a requirement, not a suggestion. Every team must hold valid, league-approved licenses:</p>
-                    <ul class="list-disc list-outside ml-6 space-y-2 mb-6">
-                        <li><strong class="text-white">The Racing License:</strong> Both the Main Driver and the Co-Driver must pass a "Dirt Performance Test." This includes a timed trial and a safety demonstration to prove they can control high-powered vehicles on loose surfaces.</li>
-                        <li><strong class="text-white">The Technical License:</strong> The Lead Technician must pass a "Master Tech Certification" exam proctored by ZRX or 7D Autos. This ensures they understand the technical regulations, weight limits, and speed governors enforced by the RMO.</li>
-                    </ul>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-8 mb-3 uppercase">3.2 Mandatory Licensing</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-carbon-light border border-carbon-border p-5 aero-cut relative overflow-hidden">
+                            <div class="absolute right-0 top-0 h-full w-1 bg-f1-red"></div>
+                            <i class="fa-solid fa-steering-wheel text-3xl text-gray-400 mb-3"></i>
+                            <h4 class="text-white font-heading text-2xl uppercase tracking-wider mb-1">The Racing License</h4>
+                            <p class="text-sm text-gray-400">Main Driver & Co-Driver must pass a "Dirt Performance Test" (timed trial + safety demo).</p>
+                        </div>
+                        <div class="bg-carbon-light border border-carbon-border p-5 aero-cut relative overflow-hidden">
+                            <div class="absolute right-0 top-0 h-full w-1 bg-dirt-orange"></div>
+                            <i class="fa-solid fa-screwdriver-wrench text-3xl text-gray-400 mb-3"></i>
+                            <h4 class="text-white font-heading text-2xl uppercase tracking-wider mb-1">The Technical License</h4>
+                            <p class="text-sm text-gray-400">Lead Technician must pass "Master Tech Certification" proctored by ZRX/7D.</p>
+                        </div>
+                    </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">3.3 The "Build Phase" Qualification</h3>
-                    <p class="mb-4">Registration is only the first step. To officially qualify for the season, a team must complete the Technical Build Challenge:</p>
-                    <ul class="list-disc list-outside ml-6 space-y-2 mb-6">
-                        <li><strong class="text-white">The Window:</strong> After registration, teams are given a strictly timed "Build Window."</li>
-                        <li><strong class="text-white">The Task:</strong> Teams must take a provided "Stock" chassis and modify it to meet all Dirt-F1 Technical Regulations (Speed caps, weight limits, and livery application).</li>
-                        <li><strong class="text-white">The Inspection:</strong> At the end of the time limit, RMO Scrutineers will inspect the vehicle. Failure to complete the build or failing the inspection results in an immediate disqualification of the entry.</li>
-                    </ul>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-8 mb-3 uppercase">3.3 The "Build Phase"</h3>
+                    <p class="mb-4 bg-carbon-base p-4 border-l-2 border-f1-red text-gray-300">Teams must take a provided "Stock" chassis and modify it to meet regulations within a strictly timed window. <strong class="text-f1-red">Failure = Immediate Disqualification.</strong></p>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-3">3.4 The Qualification Race (The "Cut-Off")</h3>
-                    <p class="mb-4">In the event that the number of registered teams exceeds the Grid Limit set by the RMO for the season, a Qualification Race will be held.</p>
-                    <ul class="list-disc list-outside ml-6 space-y-2 mb-6">
-                        <li><strong class="text-white">Format:</strong> A series of heat races or "Time Attack" sessions.</li>
-                        <li><strong class="text-white">Selection:</strong> Only the top-performing teams (based on lap times and technical cleanliness) will be granted a spot on the Championship Grid.</li>
-                        <li><strong class="text-white">Elimination:</strong> Teams that do not make the cut-off will have their entry fees partially refunded or rolled over to the following season's waiting list.</li>
-                    </ul>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-8 mb-3 uppercase">3.4 Qualification Race</h3>
+                    <p class="mb-4 text-gray-300">If registrations exceed Grid Limits, a Time Attack/Heat series decides the final roster.</p>
 
-                    <div class="bg-tech-800 p-6 rounded-lg border border-dirt-500/50 mt-8 shadow-lg">
-                        <h4 class="text-xl font-heading text-white mb-4 border-b border-gray-600 pb-2"><i class="fa-solid fa-clipboard-check text-dirt-500 mr-2"></i> Qualification Checklist for Team Leaders</h4>
-                        <ul class="space-y-3 font-medium">
-                            <li class="checklist-item"><strong>Payment:</strong> Seasonal Entry Fee submitted to RMO.</li>
-                            <li class="checklist-item"><strong>Roster:</strong> Full 9-member list with assigned roles submitted.</li>
-                            <li class="checklist-item"><strong>Licenses:</strong> All Driver and Tech licenses verified.</li>
-                            <li class="checklist-item"><strong>Build:</strong> Vehicle passed the "Build Window" Scrutineering.</li>
-                            <li class="checklist-item"><strong>Speed:</strong> Qualified within the top teams during the Quali-Race.</li>
+                    <div class="bg-carbon-light border border-carbon-border p-6 aero-cut mt-8 relative shadow-lg">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-dirt-orange to-f1-red"></div>
+                        <h4 class="text-3xl font-heading text-white mb-4 uppercase tracking-widest"><i class="fa-solid fa-list-check text-dirt-orange mr-2"></i> Team Leader Checklist</h4>
+                        <ul class="space-y-3 font-medium text-gray-300">
+                            <li class="flex items-center"><i class="fa-regular fa-square-check text-f1-red mr-3 text-xl"></i> Payment submitted to RMO.</li>
+                            <li class="flex items-center"><i class="fa-regular fa-square-check text-f1-red mr-3 text-xl"></i> 9-member roster with roles submitted.</li>
+                            <li class="flex items-center"><i class="fa-regular fa-square-check text-f1-red mr-3 text-xl"></i> All Driver & Tech licenses verified.</li>
+                            <li class="flex items-center"><i class="fa-regular fa-square-check text-f1-red mr-3 text-xl"></i> Vehicle passed "Build Window" Scrutineering.</li>
+                            <li class="flex items-center"><i class="fa-regular fa-square-check text-f1-red mr-3 text-xl"></i> Qualified in top times during Quali-Race.</li>
                         </ul>
                     </div>
                 `
@@ -295,113 +390,63 @@
             {
                 id: 4,
                 icon: "fa-solid fa-users-gear",
-                title: "4. Team Structure Protocol",
+                title: "4. Team Structure",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 4: Team Structure Protocol (TSP)</h2>
-                    
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">4.1 The Nine-Member Mandate</h3>
-                    <p class="mb-6">A sanctioned Dirt-F1 Team must consist of exactly nine (9) members. Each member is assigned a specific role with distinct legal and operational responsibilities. Role-swapping during a race weekend is strictly prohibited unless authorized by the RMO.</p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <!-- Leadership -->
-                        <div class="bg-tech-900/50 p-5 rounded border border-tech-700">
-                            <h4 class="text-xl font-heading text-white mb-3 text-dirt-500 border-b border-tech-700 pb-2">4.2 Leadership & Accountability</h4>
-                            <div class="mb-4">
-                                <strong class="text-white block">Team Leader (1):</strong>
-                                <ul class="list-disc list-inside text-sm text-gray-400 mt-1">
-                                    <li><span class="text-gray-300">Responsibility:</span> Supreme authority. Responsible for conduct of all 9 members.</li>
-                                    <li><span class="text-gray-300">Accountability:</span> Personally accountable to RMO for violations.</li>
-                                    <li><span class="text-gray-300">Liaison:</span> Sole contact for RMO. Submits all reports.</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <strong class="text-white block">Co-Leader (1):</strong>
-                                <ul class="list-disc list-inside text-sm text-gray-400 mt-1">
-                                    <li><span class="text-gray-300">Responsibility:</span> Direct substitute for Team Leader.</li>
-                                    <li><span class="text-gray-300">Logistics:</span> Oversees supply chain, kits, and garage inventory.</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- Technical -->
-                        <div class="bg-tech-900/50 p-5 rounded border border-tech-700">
-                            <h4 class="text-xl font-heading text-white mb-3 text-dirt-500 border-b border-tech-700 pb-2">4.3 Technical & Integrity Dept.</h4>
-                            <div class="mb-4">
-                                <strong class="text-white block">Lead Technicians (2):</strong>
-                                <ul class="list-disc list-inside text-sm text-gray-400 mt-1">
-                                    <li><span class="text-gray-300">Responsibility:</span> Handle all mods during build and repairs in Pit Stop.</li>
-                                    <li><span class="text-gray-300">Certification:</span> Must hold License from ZRX/7D.</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <strong class="text-white block">Management Technician (1):</strong>
-                                <ul class="list-disc list-inside text-sm text-gray-400 mt-1">
-                                    <li><span class="text-gray-300">Provider:</span> Assigned directly by the RMO.</li>
-                                    <li><span class="text-gray-300">Double-Role:</span> Tech assistant + Integrity Enforcement (verifies legal repairs).</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- Operations -->
-                        <div class="bg-tech-900/50 p-5 rounded border border-tech-700">
-                            <h4 class="text-xl font-heading text-white mb-3 text-dirt-500 border-b border-tech-700 pb-2">4.4 Track Operations</h4>
-                            <div class="mb-3">
-                                <strong class="text-white block">Communication Manager (1):</strong>
-                                <p class="text-sm text-gray-400">The "Voice". Only one authorized to speak to Driver. Coordinates pits.</p>
-                            </div>
-                            <div class="mb-3">
-                                <strong class="text-white block">Main Driver (1):</strong>
-                                <p class="text-sm text-gray-400">Primary operator. Must hold Racing License.</p>
-                            </div>
-                            <div>
-                                <strong class="text-white block">Co-Driver (1):</strong>
-                                <p class="text-sm text-gray-400">Navigator (pace notes) & Backup operator.</p>
-                            </div>
-                        </div>
-
-                        <!-- Support -->
-                        <div class="bg-tech-900/50 p-5 rounded border border-tech-700">
-                            <h4 class="text-xl font-heading text-white mb-3 text-dirt-500 border-b border-tech-700 pb-2">4.5 Support Personnel</h4>
-                            <div>
-                                <strong class="text-white block">Sub-Personal (1):</strong>
-                                <p class="text-sm text-gray-400">General support. Hospitality coordination, equipment transport, logistics assistance.</p>
-                            </div>
-                        </div>
+                    <div class="border-l-8 border-dirt-orange pl-4 bg-gradient-to-r from-dirt-orange/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 4: Protocol (TSP)</h2>
                     </div>
+                    
+                    <p class="mb-6 bg-carbon-light p-4 border-l-4 border-f1-red aero-cut-btn text-gray-300">A sanctioned Team must consist of <strong class="text-dirt-orange font-bold">exactly nine (9) members</strong>. Role-swapping during a weekend is strictly prohibited unless RMO authorized.</p>
 
-                    <div class="overflow-x-auto rounded-lg border border-tech-700 shadow-xl mt-6">
-                        <table class="w-full text-left text-sm text-gray-300">
-                            <thead class="text-xs uppercase bg-tech-900 text-dirt-500 font-heading">
+                    <div class="overflow-x-auto aero-cut border border-carbon-border mb-8 shadow-xl">
+                        <table>
+                            <thead>
                                 <tr>
-                                    <th scope="col" class="px-6 py-4 rounded-tl-lg">Role</th>
-                                    <th scope="col" class="px-6 py-4 text-center">Count</th>
-                                    <th scope="col" class="px-6 py-4 rounded-tr-lg">Primary Objective</th>
+                                    <th>Role</th>
+                                    <th class="text-center">Count</th>
+                                    <th>Primary Objective</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-tech-700/50">
-                                <tr class="bg-tech-800/40 hover:bg-tech-700/40 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-white">Team Leader</td><td class="px-6 py-4 text-center">1</td><td class="px-6 py-4">Management, Reporting & Accountability</td>
+                            <tbody>
+                                <tr>
+                                    <td class="font-bold text-white"><i class="fa-solid fa-user-tie text-dirt-orange mr-2"></i> Team Leader</td>
+                                    <td class="text-center text-white">1</td>
+                                    <td>Supreme authority. Sole contact for RMO. Responsible for all conduct.</td>
                                 </tr>
-                                <tr class="bg-tech-800/20 hover:bg-tech-700/40 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-white">Co-Leader</td><td class="px-6 py-4 text-center">1</td><td class="px-6 py-4">Logistics & Leadership Backup</td>
+                                <tr>
+                                    <td class="font-bold text-gray-300"><i class="fa-solid fa-user-shield text-gray-500 mr-2"></i> Co-Leader</td>
+                                    <td class="text-center">1</td>
+                                    <td>Leader substitute. Oversees logistics, kits, and garage inventory.</td>
                                 </tr>
-                                <tr class="bg-tech-800/40 hover:bg-tech-700/40 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-white">Lead Technician</td><td class="px-6 py-4 text-center">2</td><td class="px-6 py-4">Certified Mechanical Repairs</td>
+                                <tr>
+                                    <td class="font-bold text-white"><i class="fa-solid fa-wrench text-gray-400 mr-2"></i> Lead Technician</td>
+                                    <td class="text-center text-white">2</td>
+                                    <td>Certified by ZRX/7D. Handles build phase and Pit Stop repairs.</td>
                                 </tr>
-                                <tr class="bg-tech-800/20 hover:bg-tech-700/40 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-dirt-500">Management Tech</td><td class="px-6 py-4 text-center text-dirt-500 font-bold">1</td><td class="px-6 py-4 text-dirt-500">Rule Enforcement & Technical Aid</td>
+                                <tr class="bg-f1-dark/20">
+                                    <td class="font-bold text-f1-red"><i class="fa-solid fa-eye mr-2"></i> Management Tech</td>
+                                    <td class="text-center font-bold text-f1-red">1</td>
+                                    <td class="text-f1-red">RMO Assigned. Verifies legal repairs (Integrity Enforcement).</td>
                                 </tr>
-                                <tr class="bg-tech-800/40 hover:bg-tech-700/40 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-white">Comm. Manager</td><td class="px-6 py-4 text-center">1</td><td class="px-6 py-4">Radio Control & Pit Coordination</td>
+                                <tr>
+                                    <td class="font-bold text-white"><i class="fa-solid fa-headset text-dirt-orange mr-2"></i> Comm. Manager</td>
+                                    <td class="text-center text-white">1</td>
+                                    <td>The "Voice". Controls radio traffic and coordinates Pit Lane entries.</td>
                                 </tr>
-                                <tr class="bg-tech-800/20 hover:bg-tech-700/40 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-white">Main Driver</td><td class="px-6 py-4 text-center">1</td><td class="px-6 py-4">High-Performance Vehicle Operation</td>
+                                <tr>
+                                    <td class="font-bold text-white"><i class="fa-solid fa-steering-wheel text-dirt-orange mr-2"></i> Main Driver</td>
+                                    <td class="text-center text-white">1</td>
+                                    <td>Primary operator. Holds Racing License.</td>
                                 </tr>
-                                <tr class="bg-tech-800/40 hover:bg-tech-700/40 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-white">Co-Driver</td><td class="px-6 py-4 text-center">1</td><td class="px-6 py-4">Navigation & Backup Operator</td>
+                                <tr>
+                                    <td class="font-bold text-gray-300"><i class="fa-solid fa-map-location-dot text-gray-500 mr-2"></i> Co-Driver</td>
+                                    <td class="text-center">1</td>
+                                    <td>Navigator (pace notes) & Backup operator.</td>
                                 </tr>
-                                <tr class="bg-tech-800/20 hover:bg-tech-700/40 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-white">Sub-Personal</td><td class="px-6 py-4 text-center">1</td><td class="px-6 py-4">General Team Utility</td>
+                                <tr>
+                                    <td class="font-bold text-gray-300"><i class="fa-solid fa-people-carry-box text-gray-500 mr-2"></i> Sub-Personal</td>
+                                    <td class="text-center">1</td>
+                                    <td>Hospitality coordination, transport, and general utility.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -410,293 +455,221 @@
             },
             {
                 id: 5,
-                icon: "fa-solid fa-gauge-high",
-                title: "5. Technical Regulations",
+                icon: "fa-solid fa-gears",
+                title: "5. Tech Regulations",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 5: Technical Regulations (TR)</h2>
+                    <div class="border-l-8 border-f1-red pl-4 bg-gradient-to-r from-f1-red/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 5: Tech Regs</h2>
+                    </div>
                     
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">5.1 Performance Caps (Speed & Weight)</h3>
-                    <p class="mb-3">To ensure competitive parity, the RMO establishes strict performance boundaries.</p>
-                    <ul class="list-disc list-inside ml-4 space-y-2 mb-6">
-                        <li><strong class="text-white">The Baseline:</strong> The default maximum speed is <span class="text-dirt-500 font-bold font-heading text-xl mx-1">180 km/h</span> and the maximum allowable weight is <span class="text-dirt-500 font-bold font-heading text-xl mx-1">1200kg</span>.</li>
-                        <li><strong class="text-white">Seasonal Adjustments:</strong> These caps are subject to change based on track surface or theme, announced during Registration.</li>
-                        <li><strong class="text-white">Modification Tolerance:</strong> Teams may modify engines/transmissions/chassis, but the final output must remain within caps. A car that is "too fast" or "too light" will fail inspection.</li>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-6 mb-3 uppercase">5.1 Performance Caps</h3>
+                    <div class="flex flex-wrap gap-4 mb-6">
+                        <div class="bg-carbon-light border-l-4 border-dirt-orange p-5 aero-cut flex-1 min-w-[200px] shadow-lg">
+                            <p class="text-gray-400 text-sm uppercase tracking-widest font-bold">Max Speed</p>
+                            <p class="text-5xl font-heading text-white mt-1">180 <span class="text-dirt-orange text-2xl">KM/H</span></p>
+                        </div>
+                        <div class="bg-carbon-light border-l-4 border-gray-500 p-5 aero-cut flex-1 min-w-[200px] shadow-lg">
+                            <p class="text-gray-400 text-sm uppercase tracking-widest font-bold">Min Weight</p>
+                            <p class="text-5xl font-heading text-white mt-1">1200 <span class="text-gray-400 text-2xl">KG</span></p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-8 italic">Modifications allowed, but final output must remain within caps. Violations result in inspection failure.</p>
+
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-6 mb-3 uppercase">5.2 "Pure Drive" Mandate</h3>
+                    <div class="bg-[#110000] border border-f1-red p-6 aero-cut mb-8 shadow-[0_0_15px_rgba(225,6,0,0.2)]">
+                        <h4 class="text-f1-red font-heading text-3xl mb-3 uppercase tracking-widest"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Electronic Aids Forbidden</h4>
+                        <p class="text-gray-300 mb-4">Dirt-F1 is a test of human reflex. The following are strictly prohibited:</p>
+                        <div class="flex flex-wrap gap-3 mb-4">
+                            <span class="bg-f1-dark/40 text-red-200 border border-f1-red px-4 py-1 text-sm font-bold tracking-wide aero-cut-btn">ABS</span>
+                            <span class="bg-f1-dark/40 text-red-200 border border-f1-red px-4 py-1 text-sm font-bold tracking-wide aero-cut-btn">Traction Control</span>
+                            <span class="bg-f1-dark/40 text-red-200 border border-f1-red px-4 py-1 text-sm font-bold tracking-wide aero-cut-btn">Launch Control</span>
+                            <span class="bg-f1-dark/40 text-red-200 border border-f1-red px-4 py-1 text-sm font-bold tracking-wide aero-cut-btn">Stability Scripts</span>
+                        </div>
+                        <p class="text-sm text-white bg-f1-red/20 inline-block px-3 py-1 border-l-2 border-f1-red"><span class="text-f1-red font-bold">PENALTY:</span> Immediate Season Disqualification.</p>
+                    </div>
+
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-6 mb-3 uppercase">5.3 Livery: The 52% Rule</h3>
+                    <p class="mb-4 text-gray-300">Vehicles must visually represent the team identity.</p>
+                    <div class="flex h-10 w-full bg-carbon-base border border-carbon-border rounded overflow-hidden mb-2 shadow-inner">
+                        <div class="h-full bg-dirt-orange flex items-center justify-center text-black font-bold text-sm font-heading tracking-widest" style="width: 52%">52% TEAM COLORS</div>
+                        <div class="h-full bg-[#333] flex items-center justify-center text-gray-300 font-bold text-sm font-heading tracking-widest" style="width: 48%">48% SPONSORS</div>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-8 italic">All liveries subject to visual approval during Build Window.</p>
+
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-6 mb-3 uppercase">5.4 Inspection Protocol</h3>
+                    <ul class="space-y-3">
+                        <li class="bg-carbon-light border-l-4 border-gray-500 p-4 aero-cut-btn shadow"><strong class="text-white text-xl font-heading tracking-wide">Pre-Race:</strong> <span class="text-gray-300">Certify car is safe/legal.</span></li>
+                        <li class="bg-carbon-light border-l-4 border-gray-500 p-4 aero-cut-btn shadow"><strong class="text-white text-xl font-heading tracking-wide">Post-Race:</strong> <span class="text-gray-300">Ensure no "illegal tuning" occurred.</span></li>
+                        <li class="bg-carbon-light border-l-4 border-f1-red p-4 aero-cut-btn shadow"><strong class="text-f1-red text-xl font-heading tracking-wide">Mid-Race (Pit):</strong> <span class="text-gray-300">"Quick-Scan" by Management Tech after every repair.</span></li>
                     </ul>
-
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">5.2 The "Pure Drive" Mandate (Electronic Aids)</h3>
-                    <p class="mb-3">Dirt-F1 is a test of human reflex. All vehicles must be mechanically "analog."</p>
-                    <div class="bg-red-900/20 border border-red-700/50 p-4 rounded mb-6">
-                        <strong class="text-red-400 block mb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Forbidden Assists (Strictly Prohibited):</strong>
-                        <ul class="list-none flex flex-wrap gap-3">
-                            <li class="bg-red-950 text-red-300 px-3 py-1 rounded text-sm">Anti-lock Braking System (ABS)</li>
-                            <li class="bg-red-950 text-red-300 px-3 py-1 rounded text-sm">Traction Control (TCS)</li>
-                            <li class="bg-red-950 text-red-300 px-3 py-1 rounded text-sm">Launch Control</li>
-                            <li class="bg-red-950 text-red-300 px-3 py-1 rounded text-sm">Stability Management Scripts</li>
-                        </ul>
-                        <p class="mt-3 text-sm text-gray-400"><strong class="text-white">Penalty:</strong> Immediate Season Disqualification if detected at any time.</p>
-                    </div>
-
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">5.3 Livery & Branding Standards</h3>
-                    <p class="mb-4">Teams are encouraged to build a strong visual identity, but must adhere to the <strong>52% Rule</strong>.</p>
-                    <div class="flex flex-col md:flex-row gap-4 mb-6">
-                        <div class="flex-1 bg-tech-800 p-4 rounded border-l-4 border-dirt-500">
-                            <h4 class="text-white font-bold mb-1">52% Team Representation</h4>
-                            <p class="text-sm text-gray-400">Minimum area representing team name and theme colors.</p>
-                        </div>
-                        <div class="flex-1 bg-tech-800 p-4 rounded border-l-4 border-gray-500">
-                            <h4 class="text-white font-bold mb-1">48% Sponsorship</h4>
-                            <p class="text-sm text-gray-400">Area for logos of partners (ZRX, 7D, GM, EBT, X-NEWS).</p>
-                        </div>
-                    </div>
-
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">5.4 The Inspection Protocol</h3>
-                    <p class="mb-3">Integrity is verified through a rigorous three-stage inspection process.</p>
-                    <ol class="list-decimal list-inside ml-4 space-y-2 mb-6 text-gray-300">
-                        <li><strong class="text-white">Pre-Race Inspection:</strong> Conducted before qualifying heats.</li>
-                        <li><strong class="text-white">Post-Race Inspection:</strong> Conducted after final flag to check for "illegal tuning".</li>
-                        <li><strong class="text-white">Mid-Race Technical Audit:</strong> "Quick-Scan" by Management Tech after every pit stop.</li>
-                    </ol>
-
-                    <div class="overflow-x-auto rounded-lg border border-tech-700 shadow-xl mt-6">
-                        <table class="w-full text-left text-sm text-gray-300">
-                            <thead class="text-xs uppercase bg-tech-900 text-dirt-500 font-heading">
-                                <tr>
-                                    <th scope="col" class="px-6 py-4 rounded-tl-lg">Feature</th>
-                                    <th scope="col" class="px-6 py-4">Regulation</th>
-                                    <th scope="col" class="px-6 py-4 rounded-tr-lg">Penalty for Violation</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-tech-700/50">
-                                <tr class="bg-tech-800/40 hover:bg-tech-700/40">
-                                    <td class="px-6 py-4 font-bold text-white">Max Speed</td><td class="px-6 py-4">180 km/h (Unless updated)</td><td class="px-6 py-4 text-red-400">Disqualification / Points Loss</td>
-                                </tr>
-                                <tr class="bg-tech-800/20 hover:bg-tech-700/40">
-                                    <td class="px-6 py-4 font-bold text-white">Max Weight</td><td class="px-6 py-4">1200kg (Unless updated)</td><td class="px-6 py-4 text-red-400">Re-weighting or Disqualification</td>
-                                </tr>
-                                <tr class="bg-tech-800/40 hover:bg-tech-700/40">
-                                    <td class="px-6 py-4 font-bold text-white">Electronic Aids</td><td class="px-6 py-4">Strictly Prohibited</td><td class="px-6 py-4 text-red-500 font-bold">Permanent Season Ban</td>
-                                </tr>
-                                <tr class="bg-tech-800/20 hover:bg-tech-700/40">
-                                    <td class="px-6 py-4 font-bold text-white">Livery</td><td class="px-6 py-4">52% Team Colors/Theme</td><td class="px-6 py-4 text-yellow-400">Mandatory Repaint before Race</td>
-                                </tr>
-                                <tr class="bg-tech-800/40 hover:bg-tech-700/40">
-                                    <td class="px-6 py-4 font-bold text-white">Inspection</td><td class="px-6 py-4">Pre, Post, and Post-Pit</td><td class="px-6 py-4 text-red-400">Disqualification for No-Show</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                 `
             },
             {
                 id: 6,
-                icon: "fa-solid fa-warehouse",
-                title: "6. Team Logistics & Prep",
+                icon: "fa-solid fa-truck-fast",
+                title: "6. Logistics & Prep",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 6: Team Logistics & Preparation (TLP)</h2>
+                    <div class="border-l-8 border-dirt-orange pl-4 bg-gradient-to-r from-dirt-orange/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 6: Logistics (TLP)</h2>
+                    </div>
                     
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">6.1 The Two-Chassis Rule</h3>
-                    <p class="mb-4">To emphasize vehicle preservation and financial discipline, each team is allocated exactly <strong>two (2) cars per season</strong>.</p>
-                    <ul class="list-disc list-inside ml-4 space-y-2 mb-6 text-gray-300">
-                        <li><strong class="text-white">Primary & Backup:</strong> One car for the main heat, second as a paddock backup.</li>
-                        <li><strong class="text-white text-red-400">Chassis Loss:</strong> If both drop below durability threshold before season ends, team faces "Asset Failure" (season-ending unless emergency RMO buy-in with heavy penalty).</li>
-                    </ul>
-
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">6.2 Repair Kit Quotas</h3>
-                    <p class="mb-4">The ability to fix a car mid-race is a limited privilege, not a right.</p>
-                    <div class="bg-tech-800 p-5 rounded-lg border-l-4 border-dirt-500 mb-6">
-                        <ul class="space-y-3">
-                            <li><strong class="text-white"><i class="fa-solid fa-box text-dirt-500 mr-2"></i> Default Allocation:</strong> Three (3) Official Repair Kits per race (delivered by ZRX/7D).</li>
-                            <li><strong class="text-white"><i class="fa-solid fa-sliders text-dirt-500 mr-2"></i> Variable Adjustments:</strong> RMO can adjust quota for Enduro/Long-Track events.</li>
-                            <li><strong class="text-white"><i class="fa-solid fa-shield-halved text-dirt-500 mr-2"></i> Source Integrity:</strong> Only official partner kits are legal. "Street-grade" kits = immediate technical foul.</li>
-                        </ul>
+                    <h3 class="text-3xl font-heading text-white mt-6 mb-3 uppercase">6.1 Two-Chassis Rule</h3>
+                    <div class="bg-carbon-light p-5 border-l-4 border-f1-red aero-cut mb-8 shadow-md">
+                        <p class="mb-3 text-gray-200">Each team is allocated exactly <strong class="text-white text-xl font-heading tracking-wider">two (2) cars per season</strong> (Primary & Backup).</p>
+                        <p class="text-sm text-f1-red font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> If both suffer terminal damage before season end, team faces "Asset Failure" (season-ending without RMO emergency buy-in).</p>
                     </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">6.3 Team Facilities</h3>
-                    <p class="mb-4">Every registered team is granted:</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div class="bg-tech-900 border border-tech-700 p-4 rounded text-center">
-                            <i class="fa-solid fa-warehouse text-3xl text-gray-400 mb-2 block"></i>
-                            <strong class="text-white text-lg">The Team Garage (1)</strong>
-                            <p class="text-sm text-gray-400 mt-2">Secure, off-site location for deep mechanical work and secret tuning.</p>
+                    <h3 class="text-3xl font-heading text-white mt-6 mb-3 uppercase">6.2 Repair Kit Quotas</h3>
+                    <ul class="space-y-4 mb-8 bg-carbon-base p-5 border border-carbon-border rounded">
+                        <li class="flex items-start"><i class="fa-solid fa-box text-dirt-orange mt-1 mr-3 text-xl"></i> <div><strong class="text-white font-heading text-xl tracking-wider block">Default</strong> <span class="text-gray-400">Three (3) Official Kits per race (ZRX/7D).</span></div></li>
+                        <li class="flex items-start"><i class="fa-solid fa-sliders text-gray-400 mt-1 mr-3 text-xl"></i> <div><strong class="text-white font-heading text-xl tracking-wider block">Variable</strong> <span class="text-gray-400">RMO adjusts for Enduro events.</span></div></li>
+                        <li class="flex items-start"><i class="fa-solid fa-ban text-f1-red mt-1 mr-3 text-xl"></i> <div><strong class="text-f1-red font-heading text-xl tracking-wider block">Integrity</strong> <span class="text-gray-400">"Street-grade" kits = immediate tech foul.</span></div></li>
+                    </ul>
+
+                    <h3 class="text-3xl font-heading text-white mt-6 mb-4 uppercase">6.3 Facilities</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-carbon-light border-t-4 border-gray-600 p-6 text-center aero-cut shadow-lg">
+                            <i class="fa-solid fa-warehouse text-5xl text-gray-500 mb-4"></i>
+                            <h4 class="text-2xl font-heading text-white uppercase tracking-widest">The Garage</h4>
+                            <p class="text-sm text-gray-400 mt-2">Off-site, secure location for deep tuning between races.</p>
                         </div>
-                        <div class="bg-tech-900 border border-tech-700 p-4 rounded text-center">
-                            <i class="fa-solid fa-tent text-3xl text-gray-400 mb-2 block"></i>
-                            <strong class="text-white text-lg">The Paddock Area (1)</strong>
-                            <p class="text-sm text-gray-400 mt-2">Track-side zone for race-day operations. Interaction point with Techs & Media.</p>
+                        <div class="bg-carbon-light border-t-4 border-dirt-orange p-6 text-center aero-cut shadow-lg">
+                            <i class="fa-solid fa-tent text-5xl text-dirt-orange mb-4"></i>
+                            <h4 class="text-2xl font-heading text-white uppercase tracking-widest">The Paddock</h4>
+                            <p class="text-sm text-gray-400 mt-2">Track-side zone. Interaction point for Techs & Media.</p>
                         </div>
                     </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">6.4 The Preparation Window</h3>
-                    <p class="mb-4">A strictly timed window where "Stock" cars are transformed into Dirt-F1 machines.</p>
-                    <ul class="list-disc list-inside ml-4 space-y-2 mb-6 text-gray-300">
-                        <li><strong class="text-white">Mechanical:</strong> Install engine mods, weights, speed governors to meet Section 5.</li>
-                        <li><strong class="text-white">Aesthetic:</strong> Installation of 52% Team Livery.</li>
-                        <li><strong class="text-white text-dirt-500">Lockdown (Parc Fermé):</strong> Once window ends, cars are locked. No further modifications allowed.</li>
-                    </ul>
-
-                    <div class="overflow-x-auto rounded-lg border border-tech-700 shadow-xl mt-6">
-                        <table class="w-full text-left text-sm text-gray-300">
-                            <caption class="p-4 text-lg font-heading text-white bg-tech-900 border-b border-tech-700 text-left">TLP Resource Summary</caption>
-                            <thead class="text-xs uppercase bg-tech-800 text-dirt-500 font-heading">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">Resource</th>
-                                    <th scope="col" class="px-6 py-3">Allocation</th>
-                                    <th scope="col" class="px-6 py-3">Oversight</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-tech-700/50">
-                                <tr><td class="px-6 py-3 font-bold text-white">Race Cars</td><td class="px-6 py-3">2 per Season</td><td class="px-6 py-3">RMO Asset Tracking</td></tr>
-                                <tr class="bg-tech-800/30"><td class="px-6 py-3 font-bold text-white">Repair Kits</td><td class="px-6 py-3">3 per Race (Default)</td><td class="px-6 py-3">Partnered Customs & Management Tech</td></tr>
-                                <tr><td class="px-6 py-3 font-bold text-white">Garages</td><td class="px-6 py-3">1 per Team</td><td class="px-6 py-3">Private Team Access</td></tr>
-                                <tr class="bg-tech-800/30"><td class="px-6 py-3 font-bold text-white">Paddock Box</td><td class="px-6 py-3">1 per Team</td><td class="px-6 py-3">RMO & Partner Access</td></tr>
-                                <tr><td class="px-6 py-3 font-bold text-white">Prep Time</td><td class="px-6 py-3">As defined by RMO</td><td class="px-6 py-3 text-dirt-500">Strictly Timed & Inspected</td></tr>
-                            </tbody>
-                        </table>
+                    <h3 class="text-3xl font-heading text-white mt-6 mb-3 uppercase">6.4 Prep Window (Parc Fermé)</h3>
+                    <div class="bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] bg-carbon-base p-6 border border-carbon-border text-gray-300 relative">
+                        <div class="absolute left-0 top-0 h-full w-2 bg-dirt-orange"></div>
+                        <p class="text-lg">Strictly timed window to transform Stock to Dirt-F1 (Mods + Livery). Once ended, cars enter <strong class="text-white font-heading text-2xl uppercase tracking-widest bg-f1-red px-2 py-1 mx-1">Parc Fermé</strong> (locked status). No further mods allowed.</p>
                     </div>
                 `
             },
             {
                 id: 7,
-                icon: "fa-solid fa-stopwatch",
-                title: "7. Pit Stop & Repairs",
+                icon: "fa-solid fa-stopwatch-20",
+                title: "7. Pit Stop Rules",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 7: Pit Stop & Repair Rules (PSR)</h2>
+                    <div class="border-l-8 border-f1-red pl-4 bg-gradient-to-r from-f1-red/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 7: Pit Rules (PSR)</h2>
+                    </div>
                     
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">7.1 Pit Stop Timing & Quota</h3>
-                    <p class="mb-4">Efficiency is mandatory. The RMO enforces a strict "Time-to-Kit" ratio.</p>
-                    <div class="flex flex-col md:flex-row gap-6 mb-6">
-                        <div class="flex-1 bg-tech-800 border border-tech-700 p-4 rounded-lg">
-                            <h4 class="text-white font-bold mb-2">The Variable Scale:</h4>
-                            <ul class="space-y-2 text-sm">
-                                <li class="flex justify-between border-b border-tech-700 pb-1"><span>3 Kits (Default)</span> <strong class="text-dirt-500">3 Minutes</strong></li>
-                                <li class="flex justify-between border-b border-tech-700 pb-1"><span>4 Kits</span> <strong class="text-dirt-500">2.5 Minutes</strong></li>
-                                <li class="flex justify-between"><span>5 Kits (Max)</span> <strong class="text-dirt-500">2 Minutes</strong></li>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-6 mb-3 uppercase">7.1 Pit Timing & Quotas</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-carbon-light border border-carbon-border p-6 aero-cut shadow-lg">
+                            <h4 class="text-white font-heading text-2xl mb-4 border-b border-carbon-border pb-2 uppercase tracking-widest">Time-To-Kit Ratio</h4>
+                            <ul class="space-y-3 text-lg font-heading tracking-wide">
+                                <li class="flex justify-between items-center"><span class="text-gray-300">3 Kits (Standard)</span> <span class="text-white bg-dirt-orange px-3 py-1 rounded-sm">3 Min</span></li>
+                                <li class="flex justify-between items-center"><span class="text-gray-300">4 Kits</span> <span class="text-white bg-dirt-orange px-3 py-1 rounded-sm">2.5 Min</span></li>
+                                <li class="flex justify-between items-center"><span class="text-gray-300">5 Kits (Max)</span> <span class="text-white bg-f1-red px-3 py-1 rounded-sm">2 Min</span></li>
                             </ul>
                         </div>
-                        <div class="flex-1 bg-red-900/20 border border-red-700/50 p-4 rounded-lg flex flex-col justify-center">
-                            <h4 class="text-red-400 font-bold mb-1"><i class="fa-solid fa-clock mr-1"></i> Over-Time Penalty</h4>
-                            <p class="text-sm text-gray-300">Vehicle held in pits for the duration of <strong class="text-white">one entire lap</strong> before rejoining.</p>
+                        <div class="bg-[#110000] border-t-4 border-f1-red p-6 aero-cut flex flex-col justify-center shadow-lg">
+                            <h4 class="text-f1-red font-heading text-3xl mb-2 uppercase tracking-widest"><i class="fa-solid fa-clock mr-2"></i> Over-Time Penalty</h4>
+                            <p class="text-gray-300 text-lg">Vehicle held in pits for <strong class="text-white underline decoration-f1-red">one entire lap</strong> before rejoin.</p>
                         </div>
                     </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">7.2 The Durability Floor & Retirement</h3>
-                    <p class="mb-3">Structural integrity is monitored real-time by the Management Technician.</p>
-                    <div class="bg-tech-900 p-5 rounded border-l-4 border-red-600 mb-6">
-                        <h4 class="text-xl font-heading text-white mb-2">The 20% Threshold</h4>
-                        <p class="mb-2 text-gray-300">If durability drops below 20%, the car is classified as <strong>Terminally Damaged</strong>.</p>
-                        <ul class="list-disc list-inside text-sm text-gray-400 space-y-1">
-                            <li>Cannot be repaired in Pit Stop.</li>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-6 mb-3 uppercase">7.2 Durability & Retirement</h3>
+                    <div class="bg-carbon-base border-l-4 border-f1-red p-6 mb-8 relative overflow-hidden">
+                        <i class="fa-solid fa-car-burst absolute right-[-20px] bottom-[-20px] text-8xl text-f1-red opacity-10"></i>
+                        <h4 class="text-3xl font-heading text-white mb-2 uppercase tracking-wider">The 20% Floor</h4>
+                        <p class="text-gray-300 mb-4 text-lg">If durability drops below 20%, it is <strong class="text-f1-red font-bold">Terminally Damaged</strong>.</p>
+                        <ul class="list-disc list-inside text-gray-400 space-y-2 font-medium">
+                            <li>Cannot be repaired in pit.</li>
                             <li>Mandatory deployment of Backup Car.</li>
-                            <li>Automatic Point Deduction applied.</li>
+                            <li>Automatic Point Deduction.</li>
                         </ul>
                     </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">7.3 Pit Lane Conduct</h3>
-                    <p class="mb-3">Pit Lane is a "Professional Sanctuary". Strict behavioral standards apply.</p>
-                    <ul class="list-disc list-inside ml-4 space-y-2 mb-6 text-gray-300">
-                        <li><strong class="text-white text-red-400">Prohibited:</strong> Vulgar language, physical fighting, intentional PITTING (ramming) in pit lane.</li>
-                        <li><strong class="text-white">Inter-Team Interaction:</strong> Allowed if peaceful and professional.</li>
-                    </ul>
-
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">7.4 Repair Execution</h3>
-                    <p class="mb-6"><strong class="text-white">Authorized:</strong> Only Lead Techs and Management Tech may repair. Management Tech must perform "Ready-to-Race" check before Comm Manager clears release.</p>
-
-                    <div class="overflow-x-auto rounded-lg border border-tech-700 shadow-xl mt-6">
-                        <table class="w-full text-left text-sm text-gray-300">
-                            <caption class="p-4 text-lg font-heading text-white bg-tech-900 border-b border-tech-700 text-left">PSR Quick Reference</caption>
-                            <thead class="text-xs uppercase bg-tech-800 text-dirt-500 font-heading">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">Vehicle Status / Event</th>
-                                    <th scope="col" class="px-6 py-3">Action Required</th>
-                                    <th scope="col" class="px-6 py-3">Result / Penalty</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-tech-700/50">
-                                <tr><td class="px-6 py-3 font-bold text-white">Durability > 20%</td><td class="px-6 py-3">Standard Pit Repair</td><td class="px-6 py-3">1 Kit Used</td></tr>
-                                <tr class="bg-red-900/10"><td class="px-6 py-3 font-bold text-red-400">Durability < 20%</td><td class="px-6 py-3">Mandatory Retirement</td><td class="px-6 py-3 text-red-400">Use 2nd Car / Point Loss</td></tr>
-                                <tr><td class="px-6 py-3 font-bold text-yellow-500">Over-Time in Pit</td><td class="px-6 py-3">Held in Box</td><td class="px-6 py-3 text-yellow-500">1 Lap Time-Out</td></tr>
-                            </tbody>
-                        </table>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-6 mb-3 uppercase">7.3 Lane Conduct</h3>
+                    <p class="mb-4 text-gray-300">Pit Lane is a Professional Sanctuary.</p>
+                    <div class="flex gap-3 flex-wrap mb-8">
+                        <span class="bg-f1-dark/30 text-white px-4 py-2 font-heading text-xl tracking-widest aero-cut-btn border border-f1-red shadow-[0_0_10px_rgba(225,6,0,0.3)]">NO Vulgarity</span>
+                        <span class="bg-f1-dark/30 text-white px-4 py-2 font-heading text-xl tracking-widest aero-cut-btn border border-f1-red shadow-[0_0_10px_rgba(225,6,0,0.3)]">NO Fighting</span>
+                        <span class="bg-f1-dark/30 text-white px-4 py-2 font-heading text-xl tracking-widest aero-cut-btn border border-f1-red shadow-[0_0_10px_rgba(225,6,0,0.3)]">NO Pit Ramming</span>
                     </div>
+
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-6 mb-3 uppercase">7.4 Execution</h3>
+                    <p class="bg-carbon-light border border-carbon-border p-5 text-gray-300 aero-cut text-lg">
+                        Only Lead Techs perform repairs. <strong class="text-dirt-orange">Management Tech</strong> must perform "Ready-to-Race" verification before Comm Manager calls release.
+                    </p>
                 `
             },
             {
                 id: 8,
-                icon: "fa-solid fa-flag-checkered",
-                title: "8. On-Track Race Rules",
+                icon: "fa-solid fa-road-spikes",
+                title: "8. On-Track Combat",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 8: On-Track Race Rules (ORR)</h2>
+                    <div class="border-l-8 border-dirt-orange pl-4 bg-gradient-to-r from-dirt-orange/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 8: Track Rules (ORR)</h2>
+                    </div>
                     
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">8.1 The "Clean Inventory" Mandate</h3>
-                    <p class="mb-4">To prevent illegal tools/weapons, strict inventory limits apply.</p>
-                    <div class="bg-tech-800 p-4 rounded border border-tech-700 mb-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <h4 class="text-white font-bold mb-2 border-b border-gray-600 pb-1">Driver Inventory:</h4>
-                                <ul class="list-disc list-inside text-sm text-gray-300">
-                                    <li>Vehicle ignition keys.</li>
-                                    <li>Basic hydration/nutrition.</li>
-                                    <li>One (1) official Team Radio.</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 class="text-white font-bold mb-2 border-b border-gray-600 pb-1">Vehicle Storage:</h4>
-                                <ul class="list-disc list-inside text-sm text-gray-300">
-                                    <li>Exactly two (2) cans of backup fuel.</li>
-                                    <li><strong class="text-red-400">NOTHING ELSE.</strong></li>
-                                </ul>
-                            </div>
+                    <h3 class="text-3xl font-heading text-white mt-6 mb-4 uppercase">8.1 Clean Inventory</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-carbon-light border-t-4 border-gray-500 p-6 aero-cut shadow-md">
+                            <h4 class="text-white font-heading text-2xl mb-3 uppercase tracking-widest flex items-center"><i class="fa-solid fa-user-astronaut mr-2 text-gray-400"></i> Driver Carries:</h4>
+                            <ul class="list-disc list-inside text-gray-300 space-y-2">
+                                <li>Ignition Keys</li>
+                                <li>Basic Food/Water</li>
+                                <li>1 Official Radio</li>
+                            </ul>
+                        </div>
+                        <div class="bg-carbon-light border-t-4 border-dirt-orange p-6 aero-cut shadow-md">
+                            <h4 class="text-white font-heading text-2xl mb-3 uppercase tracking-widest flex items-center"><i class="fa-solid fa-car mr-2 text-dirt-orange"></i> Vehicle Stores:</h4>
+                            <ul class="list-disc list-inside text-gray-300 space-y-2">
+                                <li>Exactly 2 Fuel Cans</li>
+                                <li class="text-f1-red font-bold mt-3 list-none text-xl font-heading tracking-widest bg-f1-red/10 inline-block px-2">NOTHING ELSE.</li>
+                            </ul>
                         </div>
                     </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">8.2 Communication & Combat</h3>
-                    <ul class="space-y-4 mb-6">
-                        <li class="bg-tech-900/50 p-3 rounded border-l-2 border-dirt-500">
-                            <strong class="text-white block">Authorized Radio:</strong> Drivers communicate ONLY with their Comm Manager. Outside radio (metagaming) = severe breach.
+                    <h3 class="text-3xl font-heading text-white mt-6 mb-4 uppercase">8.2 Comms & Combat</h3>
+                    <ul class="space-y-4 mb-8">
+                        <li class="bg-carbon-base p-5 border-l-4 border-gray-400 aero-cut-btn shadow">
+                            <strong class="text-white block uppercase tracking-widest text-xl font-heading mb-1">Radio Protocol</strong>
+                            <span class="text-gray-300">Drivers communicate ONLY with Comm Manager. Metagaming = Ban.</span>
                         </li>
-                        <li class="bg-tech-900/50 p-3 rounded border-l-2 border-dirt-500">
-                            <strong class="text-white block">Combat & Pitting:</strong> Ramming is permitted as a tactical maneuver.
+                        <li class="bg-carbon-base p-5 border-l-4 border-dirt-orange aero-cut-btn shadow">
+                            <strong class="text-dirt-orange block uppercase tracking-widest text-xl font-heading mb-1">Pitting allowed</strong>
+                            <span class="text-gray-300">Ramming is permitted as a tactical maneuver.</span>
                         </li>
-                        <li class="bg-red-900/20 p-3 rounded border-l-2 border-red-500">
-                            <strong class="text-red-400 block">The "Zero-Harm" Rule:</strong> Contact must NOT result in intentional physical injury ("kills") to other players. Disable the car, not the person.
+                        <li class="bg-[#110000] p-5 border-l-4 border-f1-red aero-cut-btn shadow">
+                            <strong class="text-f1-red block uppercase tracking-widest text-xl font-heading mb-1">Zero-Harm Rule</strong>
+                            <span class="text-gray-300">Contact must NOT result in physical injury ("kills"). Disable car, not player.</span>
                         </li>
                     </ul>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">8.3 Mechanical Failures</h3>
-                    <p class="mb-4">If a car breaks down on track, it is considered <strong>Retired</strong>. In-track repairs are strictly prohibited without explicit "Clearance" from an RMO official (e.g., verifying a server glitch).</p>
-
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-8 mb-4">8.4 The Flag System (Penalties)</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                        <!-- Blue -->
-                        <div class="flex bg-tech-800 rounded overflow-hidden border border-tech-700 shadow-md">
-                            <div class="bg-blue-500 w-16 flex items-center justify-center text-3xl shadow-inner">🟦</div>
-                            <div class="p-3">
-                                <h4 class="text-blue-400 font-bold uppercase text-sm">Blue Flag (Minor)</h4>
-                                <p class="text-xs text-gray-300 mt-1">Formal warning; record added to team file.</p>
+                    <h3 class="text-3xl font-heading text-white mt-8 mb-5 uppercase">8.3 Flag System (Live Penalties)</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex bg-carbon-light aero-cut border border-carbon-border hover:border-gray-500 transition-colors">
+                            <div class="w-16 bg-[#3b82f6] flex items-center justify-center text-3xl font-heading font-bold text-white aero-cut-btn shadow-inner">B</div>
+                            <div class="p-4">
+                                <h4 class="text-[#3b82f6] font-heading text-xl uppercase tracking-widest m-0">Warning</h4>
+                                <p class="text-sm text-gray-400 mt-1 font-medium">Record added to team file.</p>
                             </div>
                         </div>
-                        <!-- Yellow -->
-                        <div class="flex bg-tech-800 rounded overflow-hidden border border-tech-700 shadow-md">
-                            <div class="bg-yellow-400 w-16 flex items-center justify-center text-3xl shadow-inner">🟨</div>
-                            <div class="p-3">
-                                <h4 class="text-yellow-400 font-bold uppercase text-sm">Yellow Flag (Moderate)</h4>
-                                <p class="text-xs text-gray-300 mt-1">Time penalty (e.g., +20s) or "Drive-Through."</p>
+                        <div class="flex bg-carbon-light aero-cut border border-carbon-border hover:border-yellow-500 transition-colors">
+                            <div class="w-16 bg-[#eab308] flex items-center justify-center text-3xl font-heading font-bold text-black aero-cut-btn shadow-inner">Y</div>
+                            <div class="p-4">
+                                <h4 class="text-[#eab308] font-heading text-xl uppercase tracking-widest m-0">Penalty</h4>
+                                <p class="text-sm text-gray-400 mt-1 font-medium">Time added or Drive-Through.</p>
                             </div>
                         </div>
-                        <!-- Red -->
-                        <div class="flex bg-tech-800 rounded overflow-hidden border border-tech-700 shadow-md">
-                            <div class="bg-red-600 w-16 flex items-center justify-center text-3xl shadow-inner">🟥</div>
-                            <div class="p-3">
-                                <h4 class="text-red-500 font-bold uppercase text-sm">Red Flag (Severe)</h4>
-                                <p class="text-xs text-gray-300 mt-1">Immediate removal from current race; 0 points.</p>
+                        <div class="flex bg-carbon-light aero-cut border border-carbon-border hover:border-f1-red transition-colors">
+                            <div class="w-16 bg-f1-red flex items-center justify-center text-3xl font-heading font-bold text-white aero-cut-btn shadow-inner">R</div>
+                            <div class="p-4">
+                                <h4 class="text-f1-red font-heading text-xl uppercase tracking-widest m-0">Disqualified</h4>
+                                <p class="text-sm text-gray-400 mt-1 font-medium">Removed from heat; 0 pts.</p>
                             </div>
                         </div>
-                        <!-- Black -->
-                        <div class="flex bg-tech-800 rounded overflow-hidden border border-tech-700 shadow-md">
-                            <div class="bg-black w-16 flex items-center justify-center text-3xl border-r border-gray-700 shadow-inner">⬛</div>
-                            <div class="p-3">
-                                <h4 class="text-white font-bold uppercase text-sm">Black Flag (Extreme)</h4>
-                                <p class="text-xs text-gray-300 mt-1">Season Ban or Permanent Blacklist from Industry.</p>
+                        <div class="flex bg-carbon-light aero-cut border border-gray-600 hover:border-white transition-colors">
+                            <div class="w-16 bg-[#111] flex items-center justify-center text-3xl font-heading font-bold text-white aero-cut-btn border-r border-gray-600 shadow-inner">BL</div>
+                            <div class="p-4">
+                                <h4 class="text-white font-heading text-xl uppercase tracking-widest m-0">Blacklist</h4>
+                                <p class="text-sm text-gray-400 mt-1 font-medium">Permanent Industry Ban.</p>
                             </div>
                         </div>
                     </div>
@@ -704,188 +677,135 @@
             },
             {
                 id: 9,
-                icon: "fa-solid fa-file-signature",
-                title: "9. Reporting & Compliance",
+                icon: "fa-solid fa-file-contract",
+                title: "9. Reporting",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 9: Reporting & Compliance (RC)</h2>
+                    <div class="border-l-8 border-f1-red pl-4 bg-gradient-to-r from-f1-red/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 9: Compliance (RC)</h2>
+                    </div>
                     
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">9.1 The Lead Liaison Protocol</h3>
-                    <p class="mb-4">The Team Leader is the sole individual responsible for data submission via official league channels.</p>
+                    <p class="mb-6 text-gray-300 text-lg">Team Leader is <strong class="text-white">solely responsible</strong> for data submission to RMO via official channels.</p>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">9.2 Mandatory Data Submissions</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <div class="bg-tech-800 p-5 rounded border-t-4 border-dirt-500 shadow-md">
-                            <h4 class="text-white font-heading text-lg mb-2">A. Financial Summary</h4>
-                            <p class="text-sm text-gray-400 mb-2">Line-item expense report (Kits, Fees, Hospitality).</p>
-                            <p class="text-xs text-dirt-500 font-bold">Purpose: Verify Cost Cap.</p>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-8 mb-5 uppercase">9.2 Mandatory Packets (Post-Race)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                        <div class="bg-carbon-light p-6 border-l-4 border-gray-500 aero-cut shadow-md">
+                            <h4 class="text-white font-heading text-2xl mb-2 tracking-widest uppercase"><i class="fa-solid fa-file-invoice-dollar mr-2 text-gray-400"></i> Financials</h4>
+                            <p class="text-gray-400">Line-item expense report. Verifies Cost Cap.</p>
                         </div>
-                        <div class="bg-tech-800 p-5 rounded border-t-4 border-dirt-500 shadow-md">
-                            <h4 class="text-white font-heading text-lg mb-2">B. Status & Health Report</h4>
-                            <p class="text-sm text-gray-400 mb-2">Current mech status of chassis (Engine, Durability, Replaced Parts).</p>
+                        <div class="bg-carbon-light p-6 border-l-4 border-gray-500 aero-cut shadow-md">
+                            <h4 class="text-white font-heading text-2xl mb-2 tracking-widest uppercase"><i class="fa-solid fa-heart-pulse mr-2 text-gray-400"></i> Health Report</h4>
+                            <p class="text-gray-400">Mech status of chassis (Durability, replaced parts).</p>
                         </div>
-                        <div class="bg-tech-800 p-5 rounded border-t-4 border-dirt-500 shadow-md">
-                            <h4 class="text-white font-heading text-lg mb-2">C. The Integrity Audit</h4>
-                            <p class="text-sm text-gray-400 mb-2">Verification signed by Management Tech confirming legal mods and kit quota.</p>
+                        <div class="bg-carbon-light p-6 border-l-4 border-f1-red aero-cut shadow-md">
+                            <h4 class="text-f1-red font-heading text-2xl mb-2 tracking-widest uppercase"><i class="fa-solid fa-clipboard-check mr-2"></i> Integrity Audit</h4>
+                            <p class="text-gray-400">Signed by Management Tech confirming legal mods & kits.</p>
                         </div>
-                        <div class="bg-tech-800 p-5 rounded border-t-4 border-gray-400 shadow-md">
-                            <h4 class="text-white font-heading text-lg mb-2">D. Visual Records (POV Clips)</h4>
-                            <p class="text-sm text-gray-400 mb-2">Required on-demand to resolve PITTING or shortcut disputes.</p>
+                        <div class="bg-carbon-light p-6 border-l-4 border-dirt-orange aero-cut shadow-md">
+                            <h4 class="text-white font-heading text-2xl mb-2 tracking-widest uppercase"><i class="fa-solid fa-video mr-2 text-dirt-orange"></i> Visual (POV)</h4>
+                            <p class="text-gray-400">On-demand delivery to resolve disputes.</p>
                         </div>
                     </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">9.3 Deadlines & Violations</h3>
-                    <ul class="space-y-3 mb-6 bg-tech-900/50 p-4 border border-tech-700 rounded text-gray-300">
-                        <li><strong class="text-white"><i class="fa-solid fa-stopwatch text-dirt-500 mr-2"></i> The Deadline:</strong> Submitted within 24 hours of final flag.</li>
-                        <li><strong class="text-white"><i class="fa-solid fa-phone text-dirt-500 mr-2"></i> Delays:</strong> Must inform RMO 2 hours prior to deadline if delayed.</li>
-                        <li><strong class="text-white"><i class="fa-solid fa-triangle-exclamation text-red-500 mr-2"></i> Violations:</strong> 
-                            <span class="block ml-6 text-sm mt-1">Minor (Logs) = Fines. Moderate (Financial/POV) = Point Deductions. Severe (Integrity Audit) = Red/Black Flag.</span>
-                        </li>
-                    </ul>
-
-                    <div class="overflow-x-auto rounded-lg border border-tech-700 shadow-xl mt-6">
-                        <table class="w-full text-left text-sm text-gray-300">
-                            <thead class="text-xs uppercase bg-tech-900 text-dirt-500 font-heading">
-                                <tr>
-                                    <th scope="col" class="px-6 py-4 rounded-tl-lg">Requirement</th>
-                                    <th scope="col" class="px-6 py-4">Frequency</th>
-                                    <th scope="col" class="px-6 py-4 rounded-tr-lg">Verified By</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-tech-700/50">
-                                <tr class="bg-tech-800/40 hover:bg-tech-700/40">
-                                    <td class="px-6 py-4 font-bold text-white">Financial Log</td><td class="px-6 py-4">Per Race</td><td class="px-6 py-4">Team Leader</td>
-                                </tr>
-                                <tr class="bg-tech-800/20 hover:bg-tech-700/40">
-                                    <td class="px-6 py-4 font-bold text-white">Vehicle Status</td><td class="px-6 py-4">Per Race</td><td class="px-6 py-4">Lead Technician</td>
-                                </tr>
-                                <tr class="bg-tech-800/40 hover:bg-tech-700/40">
-                                    <td class="px-6 py-4 font-bold text-dirt-500">Integrity Audit</td><td class="px-6 py-4 text-dirt-500">Per Race</td><td class="px-6 py-4 text-dirt-500 font-bold">Management Tech</td>
-                                </tr>
-                                <tr class="bg-tech-800/20 hover:bg-tech-700/40">
-                                    <td class="px-6 py-4 font-bold text-white">Driver POV</td><td class="px-6 py-4 text-gray-400">On-Demand</td><td class="px-6 py-4">RMO Stewards</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <h3 class="text-3xl font-heading text-dirt-orange mt-8 mb-4 uppercase">9.3 Deadlines & Server Logic</h3>
+                    <div class="bg-carbon-base border border-carbon-border p-6 aero-cut relative shadow-lg">
+                        <i class="fa-solid fa-clock text-6xl text-gray-800 absolute right-6 top-6"></i>
+                        <ul class="space-y-4 text-gray-300">
+                            <li class="flex items-center"><strong class="text-white uppercase font-heading text-xl w-24">Deadline:</strong> Within 24 hours of final flag.</li>
+                            <li class="flex items-center"><strong class="text-white uppercase font-heading text-xl w-24">Delays:</strong> Must inform RMO 2 hours prior.</li>
+                            <li class="mt-6 pt-6 border-t border-carbon-border">
+                                <strong class="text-f1-red uppercase block mb-3 font-heading text-2xl tracking-widest">Severity Matrix:</strong>
+                                <div class="space-y-2">
+                                    <p><span class="bg-gray-700 text-white px-2 py-1 text-xs font-bold rounded mr-2">MINOR</span> Logs = Fine</p>
+                                    <p><span class="bg-dirt-orange text-white px-2 py-1 text-xs font-bold rounded mr-2">MODERATE</span> Finance/POV = Point Loss</p>
+                                    <p><span class="bg-f1-red text-white px-2 py-1 text-xs font-bold rounded mr-2">SEVERE</span> Audit failure = Red/Black Flag</p>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 `
             },
             {
                 id: 10,
-                icon: "fa-solid fa-camera-retro",
-                title: "10. Partner Responsibilities",
+                icon: "fa-solid fa-handshake-simple",
+                title: "10. Partners",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 10: Partner Responsibilities</h2>
-                    
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">10.1 Technical Partners: ZRX & 7D</h3>
-                    <ul class="list-disc list-inside space-y-2 mb-6 text-gray-300">
-                        <li><strong class="text-white">Delivery:</strong> Sole transporters of Spec parts and Kits (delivered before green flag).</li>
-                        <li><strong class="text-white">Consultation:</strong> Provide Senior Tech to train teams and certify Lead Techs.</li>
-                        <li><strong class="text-white">Scrutineering:</strong> Neutral verifiers of vehicle legality post-race.</li>
-                    </ul>
+                    <div class="border-l-8 border-dirt-orange pl-4 bg-gradient-to-r from-dirt-orange/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 10: Partners</h2>
+                    </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">10.2 Hospitality Partners: GM & EBT</h3>
-                    <ul class="list-disc list-inside space-y-2 mb-6 text-gray-300">
-                        <li><strong class="text-white">Inventory:</strong> Maintain stock trackside. "Stock-Out" = failure of service.</li>
-                        <li><strong class="text-white">Stamina:</strong> Specialized menus for stamina boosts/stress-reduction.</li>
-                        <li><strong class="text-white">Public Service:</strong> Manage spectator concessions.</li>
-                    </ul>
+                    <div class="space-y-6">
+                        <div class="bg-carbon-light border-t-2 border-gray-400 p-6 aero-cut shadow-md">
+                            <h3 class="text-3xl font-heading text-white uppercase mb-3 tracking-widest"><i class="fa-solid fa-wrench text-gray-400 mr-2"></i> Technical: ZRX & 7D</h3>
+                            <ul class="list-disc list-inside text-gray-300 space-y-2 font-medium">
+                                <li><strong class="text-white">Delivery:</strong> Transporters of Spec parts/Kits.</li>
+                                <li><strong class="text-white">Consultation:</strong> Train and certify Lead Techs.</li>
+                                <li><strong class="text-white">Scrutineering:</strong> Neutral verifiers post-race.</li>
+                            </ul>
+                        </div>
 
-                    <h3 class="text-2xl font-heading text-dirt-500 mt-6 mb-3">10.3 Media Partner: X-NEWS</h3>
-                    <ul class="list-disc list-inside space-y-2 mb-6 text-gray-300">
-                        <li><strong class="text-white">Documentation:</strong> High-quality photo/video of every heat.</li>
-                        <li><strong class="text-white text-red-400">The "Forbidden Zone":</strong> Cannot film inside track boundaries while cars are active (safety protocol).</li>
-                        <li><strong class="text-white">Post-Race:</strong> Podium interviews and official Recap within 24hrs.</li>
-                    </ul>
+                        <div class="bg-carbon-light border-t-2 border-dirt-orange p-6 aero-cut shadow-md">
+                            <h3 class="text-3xl font-heading text-white uppercase mb-3 tracking-widest"><i class="fa-solid fa-mug-hot text-dirt-orange mr-2"></i> Hospitality: GM & EBT</h3>
+                            <ul class="list-disc list-inside text-gray-300 space-y-2 font-medium">
+                                <li><strong class="text-white">Inventory:</strong> "Stock-Out" = failure of service.</li>
+                                <li><strong class="text-white">Stamina:</strong> Specialized buff menus.</li>
+                                <li><strong class="text-white">Public:</strong> Manage spectator concessions.</li>
+                            </ul>
+                        </div>
 
-                    <div class="overflow-x-auto rounded-lg border border-tech-700 shadow-xl mt-6">
-                        <table class="w-full text-left text-sm text-gray-300">
-                            <caption class="p-4 text-lg font-heading text-white bg-tech-900 border-b border-tech-700 text-left">PR Compliance Table</caption>
-                            <thead class="text-xs uppercase bg-tech-800 text-dirt-500 font-heading">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">Partner Type</th>
-                                    <th scope="col" class="px-6 py-3">Main Responsibility</th>
-                                    <th scope="col" class="px-6 py-3">Key Restriction</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-tech-700/50">
-                                <tr class="bg-tech-800/30">
-                                    <td class="px-6 py-3 font-bold text-white">Technical (ZRX/7D)</td><td class="px-6 py-3">Kit Delivery & Tech Oversight</td><td class="px-6 py-3 text-red-400">Cannot favor one team.</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3 font-bold text-white">Hospitality (GM/EBT)</td><td class="px-6 py-3">Crew Nutrition & Crowd Catering</td><td class="px-6 py-3 text-red-400">Must never run out of stock.</td>
-                                </tr>
-                                <tr class="bg-tech-800/30">
-                                    <td class="px-6 py-3 font-bold text-white">Media (X-NEWS)</td><td class="px-6 py-3">Live Broadcast & Photography</td><td class="px-6 py-3 text-red-400">No filming inside the track.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="bg-carbon-light border-t-2 border-f1-red p-6 aero-cut shadow-md">
+                            <h3 class="text-3xl font-heading text-white uppercase mb-3 tracking-widest"><i class="fa-solid fa-video text-f1-red mr-2"></i> Media: X-NEWS</h3>
+                            <ul class="list-disc list-inside text-gray-300 space-y-2 font-medium">
+                                <li><strong class="text-white">Documentation:</strong> High-quality photo/video.</li>
+                                <li><strong class="text-f1-red font-bold">Forbidden Zone:</strong> Cannot film inside track while active.</li>
+                                <li><strong class="text-white">Post-Race:</strong> Podium interviews & Recap.</li>
+                            </ul>
+                        </div>
                     </div>
                 `
             },
             {
                 id: 11,
                 icon: "fa-solid fa-trophy",
-                title: "11. Championship Standings",
+                title: "11. Standings",
                 content: `
-                    <h2 class="text-3xl font-heading text-white mb-6 uppercase border-b-2 border-dirt-500 pb-2 inline-block">Section 11: Point Allocation</h2>
+                    <div class="border-l-8 border-f1-red pl-4 bg-gradient-to-r from-f1-red/20 to-transparent py-2 mb-8 aero-cut-btn">
+                        <h2 class="text-5xl font-heading text-white uppercase m-0 leading-none">Section 11: Standings</h2>
+                    </div>
                     
-                    <p class="mb-6 text-xl text-gray-300 font-heading italic border-l-4 border-dirt-500 pl-4">The "Perfect 100": A team can earn a maximum of 100 Points per race weekend if every department performs flawlessly.</p>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                        
-                        <!-- Core Points -->
-                        <div class="bg-tech-900 rounded-lg p-5 border border-tech-700 shadow-[0_0_15px_rgba(0,0,0,0.5)] relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-dirt-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg uppercase tracking-wider">Base</div>
-                            <h3 class="text-xl font-heading text-white mb-4 border-b border-gray-600 pb-2">11.1 Podium Points</h3>
-                            <ul class="space-y-3 font-heading text-lg">
-                                <li class="flex justify-between items-center"><span class="text-yellow-400"><i class="fa-solid fa-trophy mr-2"></i> 1st Place</span> <span class="font-bold text-white bg-tech-800 px-3 py-1 rounded">50 Pts</span></li>
-                                <li class="flex justify-between items-center"><span class="text-gray-300"><i class="fa-solid fa-medal mr-2"></i> 2nd Place</span> <span class="font-bold text-white bg-tech-800 px-3 py-1 rounded">35 Pts</span></li>
-                                <li class="flex justify-between items-center"><span class="text-orange-600"><i class="fa-solid fa-medal mr-2"></i> 3rd Place</span> <span class="font-bold text-white bg-tech-800 px-3 py-1 rounded">25 Pts</span></li>
-                                <li class="flex justify-between items-center"><span class="text-gray-500"><i class="fa-solid fa-award mr-2"></i> Top 10 Finish</span> <span class="font-bold text-white bg-tech-800 px-3 py-1 rounded">10 Pts</span></li>
-                            </ul>
-                        </div>
-
-                        <!-- Bonus Points -->
-                        <div class="bg-tech-900 rounded-lg p-5 border border-tech-700 shadow-[0_0_15px_rgba(0,0,0,0.5)] relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg uppercase tracking-wider">Bonus</div>
-                            <h3 class="text-xl font-heading text-white mb-4 border-b border-gray-600 pb-2">11.2 Skill & Strategy</h3>
-                            <ul class="space-y-4 text-sm text-gray-300">
-                                <li>
-                                    <strong class="text-dirt-500 block text-base"><i class="fa-solid fa-gauge-high mr-1"></i> Fastest Lap</strong>
-                                    The X-NEWS "Speed Demon" <span class="float-right font-bold text-white bg-tech-800 px-2 py-0.5 rounded">+10 Pts</span>
-                                </li>
-                                <li>
-                                    <strong class="text-dirt-500 block text-base"><i class="fa-solid fa-wrench mr-1"></i> Tech Perfection</strong>
-                                    0 Pit Stops / No Damage <span class="float-right font-bold text-white bg-tech-800 px-2 py-0.5 rounded">+15 Pts</span>
-                                </li>
-                                <li>
-                                    <strong class="text-dirt-500 block text-base"><i class="fa-solid fa-car-side mr-1"></i> Clean Driver</strong>
-                                    Zero Contact / No Pitting <span class="float-right font-bold text-white bg-tech-800 px-2 py-0.5 rounded">+10 Pts</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Integrity Rewards -->
-                        <div class="bg-tech-900 rounded-lg p-5 border border-tech-700 shadow-[0_0_15px_rgba(0,0,0,0.5)] relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg uppercase tracking-wider">Integrity</div>
-                            <h3 class="text-xl font-heading text-white mb-4 border-b border-gray-600 pb-2">11.3 Compliance</h3>
-                            <ul class="space-y-4 text-sm text-gray-300">
-                                <li>
-                                    <strong class="text-green-400 block text-base"><i class="fa-solid fa-file-circle-check mr-1"></i> Flawless Reporting</strong>
-                                    On-time Financials & POV <span class="float-right font-bold text-white bg-tech-800 px-2 py-0.5 rounded">+10 Pts</span>
-                                </li>
-                                <li>
-                                    <strong class="text-green-400 block text-base"><i class="fa-solid fa-handshake-angle mr-1"></i> Partner Synergy</strong>
-                                    Full Hospitality & Tech compliance <span class="float-right font-bold text-white bg-tech-800 px-2 py-0.5 rounded">+5 Pts</span>
-                                </li>
-                            </ul>
-                        </div>
-
+                    <div class="bg-gradient-to-r from-dirt-orange/20 to-transparent p-5 aero-cut border-l-4 border-dirt-orange mb-8">
+                        <p class="text-2xl font-heading text-white tracking-widest uppercase m-0">The "Perfect 100"</p>
+                        <p class="text-gray-300 font-medium">Max points per weekend for flawless departmental performance.</p>
                     </div>
 
-                    <div class="bg-red-900/20 border border-red-800 p-5 rounded-lg mt-6">
-                        <h3 class="text-xl font-heading text-red-400 mb-2">11.4 The Penalty Deductions</h3>
-                        <p class="text-gray-300">Penalties are determined strictly by the RMO based on the severity of rule breaches as outlined in previous sections (Flags, Time-Outs, Disqualifications, and 2nd Car Deployments). Deductions scale directly against the Total Points accumulated during the race weekend.</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Podium -->
+                        <div class="bg-carbon-light p-6 border border-carbon-border aero-cut shadow-lg relative overflow-hidden">
+                            <i class="fa-solid fa-trophy absolute right-[-20px] bottom-[-20px] text-8xl text-gray-800 opacity-20"></i>
+                            <h3 class="text-3xl font-heading text-white mb-5 uppercase tracking-widest border-b border-carbon-border pb-2">11.1 Podium Base</h3>
+                            <ul class="space-y-4 font-heading text-2xl tracking-wide">
+                                <li class="flex justify-between border-b border-carbon-border pb-2"><span class="text-[#fbbf24]"><i class="fa-solid fa-medal mr-2"></i> 1st Place</span> <span class="text-white bg-carbon-base px-3 py-1 rounded-sm shadow-inner">+50 Pts</span></li>
+                                <li class="flex justify-between border-b border-carbon-border pb-2"><span class="text-[#9ca3af]"><i class="fa-solid fa-medal mr-2"></i> 2nd Place</span> <span class="text-white bg-carbon-base px-3 py-1 rounded-sm shadow-inner">+35 Pts</span></li>
+                                <li class="flex justify-between border-b border-carbon-border pb-2"><span class="text-[#b45309]"><i class="fa-solid fa-medal mr-2"></i> 3rd Place</span> <span class="text-white bg-carbon-base px-3 py-1 rounded-sm shadow-inner">+25 Pts</span></li>
+                                <li class="flex justify-between"><span class="text-gray-500">Top 10</span> <span class="text-white bg-carbon-base px-3 py-1 rounded-sm shadow-inner">+10 Pts</span></li>
+                            </ul>
+                        </div>
+
+                        <!-- Bonuses -->
+                        <div class="bg-carbon-light p-6 border border-carbon-border aero-cut shadow-lg">
+                            <h3 class="text-3xl font-heading text-dirt-orange mb-5 uppercase tracking-widest border-b border-carbon-border pb-2">11.2/3 Bonus Multipliers</h3>
+                            <ul class="space-y-4 font-bold text-gray-300">
+                                <li class="flex justify-between items-center"><span class="uppercase flex items-center"><i class="fa-solid fa-gauge-high mr-2 text-dirt-orange"></i> Fastest Lap</span> <span class="text-white font-heading text-xl bg-dirt-orange px-2 py-1">+10</span></li>
+                                <li class="flex justify-between items-center"><span class="uppercase flex items-center"><i class="fa-solid fa-wrench mr-2 text-dirt-orange"></i> Tech Perfect (0 Pits/Dmg)</span> <span class="text-white font-heading text-xl bg-dirt-orange px-2 py-1">+15</span></li>
+                                <li class="flex justify-between items-center"><span class="uppercase flex items-center"><i class="fa-solid fa-car-side mr-2 text-dirt-orange"></i> Clean Drive (0 Contact)</span> <span class="text-white font-heading text-xl bg-dirt-orange px-2 py-1">+10</span></li>
+                                <li class="flex justify-between items-center"><span class="uppercase flex items-center"><i class="fa-solid fa-file-circle-check mr-2 text-gray-400"></i> Flawless Reporting</span> <span class="text-white font-heading text-xl bg-gray-600 px-2 py-1">+10</span></li>
+                                <li class="flex justify-between items-center"><span class="uppercase flex items-center"><i class="fa-solid fa-handshake mr-2 text-gray-400"></i> Partner Synergy</span> <span class="text-white font-heading text-xl bg-gray-600 px-2 py-1">+5</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#110000] border-l-4 border-f1-red p-5 aero-cut shadow-md">
+                        <h3 class="text-2xl font-heading text-f1-red mb-2 uppercase tracking-widest"><i class="fa-solid fa-triangle-exclamation mr-2"></i> 11.4 Penalties</h3>
+                        <p class="text-gray-300 text-lg">Deductions scale directly against the Total Points accumulated during the race weekend, based on RMO flags, time-outs, and 2nd car deployments.</p>
                     </div>
                 `
             }
@@ -907,10 +827,10 @@
             navContainer.innerHTML = rulesData.map(section => `
                 <button 
                     onclick="switchSection(${section.id})" 
-                    class="nav-link w-full text-left px-4 py-3 rounded-lg text-sm md:text-base font-semibold text-gray-400 hover:bg-tech-800 hover:text-white transition-all flex items-center ${activeSectionId === section.id ? 'active' : ''}"
+                    class="nav-link w-full text-left px-4 py-3 mb-1 aero-cut-btn text-base font-heading tracking-widest text-gray-400 flex items-center ${activeSectionId === section.id ? 'active' : ''}"
                 >
-                    <i class="${section.icon} w-6 text-center mr-2"></i> 
-                    <span class="truncate">${section.title}</span>
+                    <i class="${section.icon} w-6 text-center mr-3 text-xl transition-colors"></i> 
+                    <span class="uppercase truncate mt-1 text-xl">${section.title}</span>
                 </button>
             `).join('');
         }
@@ -918,16 +838,23 @@
         function renderContent() {
             const section = rulesData.find(s => s.id === activeSectionId);
             if (section) {
-                // Remove animation class briefly to re-trigger it
-                contentContainer.classList.remove('fade-in');
-                void contentContainer.offsetWidth; // trigger reflow
+                // Apply slide animation
+                contentContainer.classList.remove('animate-slide-in');
+                void contentContainer.offsetWidth; // Reflow
                 contentContainer.innerHTML = section.content;
-                contentContainer.classList.add('fade-in');
+                contentContainer.classList.add('animate-slide-in');
             }
         }
 
         function switchSection(id) {
+            if(activeSectionId === id) return;
             activeSectionId = id;
+            
+            // Add a quick engine rev animation to the whole section
+            const mainSection = document.querySelector('section');
+            mainSection.classList.add('animate-rev');
+            setTimeout(() => mainSection.classList.remove('animate-rev'), 150);
+
             renderNav();
             renderContent();
             
